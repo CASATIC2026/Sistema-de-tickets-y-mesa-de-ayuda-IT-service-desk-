@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket SV    </title>
+    <link rel="stylesheet" href="pagina1.css">
+</head>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #5d7fa1, #1e40af);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+
+.form-container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 300px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+textarea{
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+input:focus {
+    border-color: #4facfe;
+    outline: none;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: rgb(221, 85, 80);
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #00c6ff;
+}
+
+</style>
+<body>
+
+    <div class="form-container">
+        <h1>Registro</h1>
+        <h3>Crear Ticket</h3>
+        <form action="#" method="post">
+            
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Ingresa tu nombre" required>
+
+            <label for="correo">Correo Electrónico</label>
+            <input type="email" id="correo" name="correo" placeholder="Ingresa tu correo" required>
+
+            <label for="telefono">Número de Teléfono</label>
+            <input type="tel" id="telefono" name="telefono" placeholder="Ingresa tu teléfono" required>
+
+
+            <h2>Detalles del Ticket</h2>
+            <form action="#" method="post" enctype="multipart/form-data">
+                <label for="resumen">Resumen del Caso</label>
+                <input type="text" id="resumen" name="resumen" required><br><br>
+        </form>
+
+        
+
+        <textarea name="descripcion" placeholder="detalles"></textarea>
+
+        <div class="archivos">
+            <label for="archivo">Agregar Archivo</label>
+            <input type="file" id="archivo" name="archivo">
+        </div>
+
+        <button type="submit">Enviar Ticket</button>
+    </div>
+
+    
+</body>
+</html

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Técnico - IT Service Desk</title>
+
+<style>
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background:#f4f6f9;
+    margin:0;
+}
+
+header{
+    background:#1e3a8a;
+    color:white;
+    padding:15px 30px;
+    font-size:20px;
+}
+
+.container{
+    padding:40px;
+}
+
+h2{
+    margin-bottom:20px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+th, td{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
+}
+
+th{
+    background:#1e3a8a;
+    color:white;
+}
+
+.priority-low{
+    background:#d1fae5;
+    color:#065f46;
+    padding:5px 10px;
+    border-radius:20px;
+}
+
+.priority-medium{
+    background:#fef3c7;
+    color:#92400e;
+    padding:5px 10px;
+    border-radius:20px;
+}
+
+.priority-high{
+    background:#fee2e2;
+    color:#991b1b;
+    padding:5px 10px;
+    border-radius:20px;
+}
+
+.status-open{
+    color:#2563eb;
+    font-weight:bold;
+}
+
+.status-progress{
+    color:#d97706;
+    font-weight:bold;
+}
+
+.status-closed{
+    color:#059669;
+    font-weight:bold;
+}
+
+.sla-normal{
+    background:#d1fae5;
+    color:#065f46;
+    padding:5px 10px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+.sla-warning{
+    background:#fef3c7;
+    color:#92400e;
+    padding:5px 10px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+.sla-expired{
+    background:#fee2e2;
+    color:#991b1b;
+    padding:5px 10px;
+    border-radius:20px;
+    font-weight:bold;
+}
+
+.time{
+    font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+🎫 Dashboard Técnico - Mesa de Ayuda
+</header>
+
+<div class="container">
+
+<h2>📋 Bandeja de Tickets</h2>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Título</th>
+<th>Prioridad</th>
+<th>Estado</th>
+<th>Tiempo Abierto</th>
+<th>SLA</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>001</td>
+<td>Error impresora oficina</td>
+<td><span class="priority-high">Crítico</span></td>
+<td><span class="status-open">Abierto</span></td>
+<td class="time" id="time1">0s</td>
+<td><span id="sla1" class="sla-warning">Por vencer</span></td>
+</tr>
+
+<tr>
+<td>002</td>
+<td>Instalación Office</td>
+<td><span class="priority-medium">Media</span></td>
+<td><span class="status-progress">En Progreso</span></td>
+<td>1h 20m</td>
+<td><span class="sla-normal">En tiempo</span></td>
+</tr>
+
+<tr>
+<td>003</td>
+<td>Actualizar antivirus</td>
+<td><span class="priority-low">Baja</span></td>
+<td><span class="status-closed">Cerrado</span></td>
+<td>Resuelto</td>
+<td><span class="sla-normal">Cumplido</span></td>
+</tr>
+
+</tbody>
+</table>
+
+</div>
+
+<script>
+
+// Simulación contador de tiempo
+let seconds = 0;
+
+setInterval(function(){
+    seconds++;
+    document.getElementById("time1").innerText = seconds + "s";
+
+    if(seconds >= 10){ // después de 10 segundos
+        let sla = document.getElementById("sla1");
+        sla.innerText = "Vencido";
+        sla.className = "sla-expired";
+    }
+
+}, 1000);
+
+</script>
+
+</body>
+</html>

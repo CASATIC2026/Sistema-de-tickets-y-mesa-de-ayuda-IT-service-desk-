@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mesa de Ayuda - Sistema de Tickets</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        /* Navbar */
+        header {
+            background:#1E293B;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #F8FAFC;
+        }
+
+        header h1 {
+            font-size: 22px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg,#5d7fa1, #1e40af);
+            color: white;
+        } 
+
+        .hero h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: rgb(221, 85, 80);
+            color: #0a0e1a;
+            font-weight: bold;
+        }
+
+        .btn-secondary {
+            background: #faf4fc;
+            color: #2F3E5C;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Cards */
+        .features {
+            padding: 60px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: rgb(253, 231, 231);
+            padding: 30px;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: #1e3a8a;
+        }
+
+        .card p {
+            font-size: 14px;
+        }
+
+        /* Footer */
+        footer {
+            background: #1e3a8a;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 40px;
+        }
+
+        @media(max-width: 768px){
+            .hero h2 {
+                font-size: 28px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<script>
+    function verificarSesion() {
+        // Verifica si existe la sesión
+        let sesion = localStorage.getItem("usuarioLogueado");
+
+        if (sesion) {
+            // Si hay sesión, entra a crear ticket
+            window.location.href = "ticket.html";
+        } else {
+            // Si NO hay sesión, manda al logins
+            alert("Debes iniciar sesión para crear un ticket");
+            window.location.href = "Login.html";
+        }
+    }
+</script>
+
+    <header>
+        <h1>Path Supoort</h1>
+        <nav>
+            <a href="#">Inicio</a>
+            <a href="#">Crear Ticket</a>
+            <a href="#">Mis Tickets</a>
+            <a href="Login.html">Iniciar Sesión</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <center>
+            <table>
+            <tr>
+                <td>
+                    <h1>PATH SUPOORT </h1>
+                </td>
+                <td>
+                    <img src="logo.jpeg" width="100px" height="100px" alt="" srcset="">
+                </td>
+            </tr>
+        </table>
+        </center>
+        <h2>Sistema de Gestión de Incidentes y Solicitudes</h2>
+        <p>Administra solicitudes, reporta incidencias y da seguimiento en tiempo real.</p>
+        <a href="#" class="btn btn-primary" onclick="verificarSesion()">Crear Nuevo Ticket</a>
+        <a href="dashboard.html" class="btn btn-secondary">Ver Mis Tickets</a>
+    </section>
+
+    <section class="features">
+        <div class="card">
+            <h3>📩 Crear Incidencias</h3>
+            <p>Registra problemas técnicos o solicitudes de soporte de manera rápida y sencilla.</p>
+        </div>
+
+        <div class="card">
+            <h3>📊 Seguimiento</h3>
+            <p>Consulta el estado de tus tickets en tiempo real y recibe notificaciones.</p>
+        </div>
+
+        <div class="card">
+            <h3>👨‍💻 Soporte Técnico</h3>
+            <p>Comunícate directamente con el equipo de soporte para resolver tus problemas.</p>
+        </div>
+    </section>
+
+    <footer>
+        © 2026 Sistema de Mesa de Ayuda | Universidad Tecnológica de El Salvador
+    </footer>
+
+</body>
+</html>

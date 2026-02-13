@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>IT Service Desk - Sistema de Tickets</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        header {
+            background: #1e3a8a;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 22px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+        }
+
+        .hero h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #1e3a8a;
+        }
+
+        .btn-secondary {
+            background: #facc15;
+            color: #333;
+        }
+
+        .modules {
+            padding: 60px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: #1e3a8a;
+        }
+
+        .card p {
+            font-size: 14px;
+        }
+
+        .flow {
+            padding: 60px 20px;
+            background: #eef2ff;
+            text-align: center;
+        }
+
+        .flow h2 {
+            margin-bottom: 20px;
+            color: #1e3a8a;
+        }
+
+        .flow ul {
+            list-style: none;
+            max-width: 700px;
+            margin: auto;
+            text-align: left;
+        }
+
+        .flow li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+        }
+
+        footer {
+            background: #1e3a8a;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 40px;
+        }
+
+        @media(max-width: 768px){
+            .hero h2 {
+                font-size: 28px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🎫 IT Service Desk</h1>
+    <nav>
+        <a href="#">Inicio</a>
+        <a href="#">Portal del Solicitante</a>
+        <a href="#">Dashboard Técnico</a>
+        <a href="#">Base de Conocimiento</a>
+        <a href="#">Iniciar Sesión</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <h2>Sistema de Gestión de Incidentes y Solicitudes</h2>
+    <p>Administra tickets, monitorea SLAs y recibe notificaciones en tiempo real.</p>
+    <a href="#" class="btn btn-primary">Crear Ticket</a>
+    <a href="#" class="btn btn-secondary">Ver Dashboard</a>
+</section>
+
+<section class="modules">
+    <div class="card">
+        <h3>📩 Portal del Solicitante</h3>
+        <p>Los empleados pueden reportar fallos, adjuntar capturas y seleccionar la prioridad del incidente.</p>
+    </div>
+
+    <div class="card">
+        <h3>🖥 Mesa de Ayuda</h3>
+        <p>Vista tipo bandeja de entrada donde los técnicos asignan tickets y cambian estados.</p>
+    </div>
+
+    <div class="card">
+        <h3>⏱ Motor de SLA</h3>
+        <p>Servicio en segundo plano que monitorea tiempos de respuesta y envía alertas automáticas.</p>
+    </div>
+
+    <div class="card">
+        <h3>📚 Base de Conocimiento</h3>
+        <p>Repositorio de soluciones frecuentes para reducir la creación de tickets repetitivos.</p>
+    </div>
+</section>
+
+<section class="flow">
+    <h2>🔄 Flujo del Sistema</h2>
+    <ul>
+        <li>1️⃣ Usuario crea ticket con prioridad (Baja, Media, Alta, Crítica).</li>
+        <li>2️⃣ El sistema inicia el temporizador de SLA automáticamente.</li>
+        <li>3️⃣ El dashboard técnico se actualiza en tiempo real.</li>
+        <li>4️⃣ Un técnico toma el ticket y cambia el estado a "En Progreso".</li>
+        <li>5️⃣ Se agregan comentarios y solución.</li>
+        <li>6️⃣ El ticket se marca como "Resuelto" o "Cerrado".</li>
+    </ul>
+</section>
+
+<footer>
+    © 2026 IT Service Desk | Universidad Tecnológica de El Salvador
+</footer>
+
+</body>
+</html>
