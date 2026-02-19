@@ -1,0 +1,57 @@
+/* CONTENEDOR */
+#misTickets {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #5d7fa1, #1e40af);
+    padding: 40px;
+}
+
+/* Caja interna */
+#misTickets .form-container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 700px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Título */
+#misTickets h1,
+#misTickets h3 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Campos */
+#misTickets input,
+#misTickets textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Labels */
+#misTickets label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* Botón */
+#misTickets button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: rgb(221, 85, 80);
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#misTickets button:hover {
+    background-color: #00c6ff;
+}

@@ -171,14 +171,13 @@ th{
 
 <script>
 
-// Simulación contador de tiempo
 let seconds = 0;
 
 setInterval(function(){
     seconds++;
     document.getElementById("time1").innerText = seconds + "s";
 
-    if(seconds >= 10){ // después de 10 segundos
+    if(seconds >= 10){ 
         let sla = document.getElementById("sla1");
         sla.innerText = "Vencido";
         sla.className = "sla-expired";

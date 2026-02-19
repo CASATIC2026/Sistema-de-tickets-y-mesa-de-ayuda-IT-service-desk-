@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mesa de Ayuda - Sistema de Tickets</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="estiloticket.css">
+    <link rel="stylesheet" href="estilomistickets.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        body {
+            background: #f4f6f9;
+            color: #333;
+        }
+        /* Navbar */
+        header {
+            background:#1E293B;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #F8FAFC;
+        }
+        header h1 {
+            font-size: 22px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .hero {
+            text-align: center;
+            padding: 15px 5px;
+            background: linear-gradient(135deg,#5d7fa1, #1e40af);
+            color: white;
+        } 
+        .hero h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        .btn {
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: rgb(221, 85, 80);
+            color: #0a0e1a;
+            font-weight: bold;
+        }
+        .btn-secondary {
+            background: #faf4fc;
+            color: #2F3E5C;
+            font-weight: bold;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .features {
+            padding: 60px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .card {
+            background: rgb(253, 231, 231);
+            padding: 30px;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .card h3 {
+            margin-bottom: 15px;
+            color: #1e3a8a;
+        }
+        .card p {
+            font-size: 14px;
+        }
+        footer {
+            background: #1e3a8a;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 40px;
+        }
+        .caja{
+            width: 300px;
+            height: 150px;
+            overflow-y: scroll ;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        @media(max-width: 768px){
+            .hero h2 {
+                font-size: 28px;
+            }
+        }
+        .container {
+            display: flex;
+            justify-content: center;   
+            margin-top: 20px;
+            }
+        .tabs {         
+            display: flex;
+            gap: 10px;
+        }
+        .tab {
+            padding: 10px 15px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .tab.active {
+            border-bottom: 3px solid #2b7cff;
+            color: #2b7cff;
+        }
+
+        .seccion {
+            display: none;
+            padding: 15px;
+        }
+
+        .seccion.activa {
+        display: block;
+        }
+    
+        #conocimientos article {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        #nuevo form{
+            display:flex;
+            flex-direction:column;
+            max-width:400px;
+        }
+
+        #nuevo input,
+        #nuevo button{
+            margin-bottom:10px;
+            padding:8px;
+        }
+
+        #nuevo button{
+            background:#1e40af;
+            color:white;
+            border:none;
+            cursor:pointer;
+        }
+
+        #nuevo button:hover{
+            opacity:0.9;
+        }
+
+        /* Footer */
+        footer{
+            background:#1e3a8a;
+            color:white;
+            text-align:center;
+            padding:15px;
+            margin-top:40px;
+        }
+        .ticket-resumen {
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .chat .msg {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            max-width: 70%;
+        }
+
+        .msg.user {
+            background: #e0f2fe;
+            margin-left: auto;
+        }
+
+        .msg.soporte {
+            background: #dcfce7;
+        }
+
+        .responder textarea {
+            width: 100%;
+            height: 80px;
+            margin-top: 10px;
+        }
+
+        .responder button {
+            margin-top: 8px;
+            padding: 8px 15px;
+        }
+        .seccion {
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        .titulo-respuesta {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .card-respuesta {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .info-ticket {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .mensaje-tecnico {
+            background: #f4f6fb;
+            padding: 20px;
+            border-left: 5px solid #3b82f6;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .footer-respuesta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .estado.abierto {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+    <link rel="stylesheet" href="../administador/css/estilomistickets.css">
+    <link rel="stylesheet" href="../administador/css/estiloticket.css">
+    <link rel="stylesheet" href="css/baseestilo.css">
+<header>
+    <h1>Path Supoort</h1>
+    <nav>
+        <a href="Login.html">Iniciar Sesión 👤​</a>
+    </nav>
+    </header>
+    <section class="hero">
+        <h1>PATH SUPOORT </h1> 
+        </table>
+        </center>
+        <h2>Sistema de Gestión de Incidentes y Solicitudes</h2>
+        <p>Administra solicitudes, reporta incidencias y da seguimiento en tiempo real.</p>
+    </section>
+    <div class="container">
+        <div class="tabs">
+        <button class="tab" onclick="mostrar('misTickets', this)">Mis Tickets</button>
+        <button class="tab" onclick="mostrar('cerrados', this)">Respuesta</button>
+        <button class="tab" onclick="mostrar('nuevo', this)">Nuevo Ticket</button>
+        <button class="tab" onclick="mostrar('conocimientos', this)">Base de conocimientos</button>
+    </div>
+    </div>
+    <script>
+    function mostrar(id, boton) {
+    // Ocultar todas las secciones
+    document.querySelectorAll('.seccion').forEach(s => {
+        s.classList.remove('activa');
+    });
+    // Quitar activo a todas las pestañas
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.remove('active');
+    });
+    // Mostrar la seleccionada
+    document.getElementById(id).classList.add('activa');
+    boton.classList.add('active');
+    }
+</script>
+
+<div class="contenido">
+
+    <div id="abiertos" class="seccion activa">
+        <h3>Tickets Abiertos</h3>
+    </div>
+   <div id="misTickets" class="seccion mis-tickets">
+
+    <h3>Mis Tickets</h3>
+    <table class="tickettabla">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Prioridad</th>
+                <th>Estado</th>
+                <th>Tiempo Abierto</th>
+                <th>SLA</th>
+            </tr>
+        </thead>
+    <tbody>
+        <tr>
+            <td>001</td>
+            <td>Error impresora oficina</td>
+            <td><span class="priority-high">Crítico</span></td>
+            <td><span class="status-open">Abierto</span></td>
+            <td class="time" id="time1">0s</td>
+            <td><span id="sla1" class="sla-warning">Por vencer</span></td>
+        </tr>
+        <tr>
+            <td>002</td>
+            <td>Instalación Office</td>
+            <td><span class="priority-medium">Media</span></td>
+            <td><span class="status-progress">En Progreso</span></td>
+            <td>1h 20m</td>
+            <td><span class="sla-normal">En tiempo</span></td>
+        </tr>
+        <tr>
+            <td>003</td>
+            <td>Actualizar antivirus</td>
+            <td><span class="priority-low">Baja</span></td>
+            <td><span class="status-closed">Cerrado</span></td>
+            <td>Resuelto</td>
+            <td><span class="sla-normal">Cumplido</span></td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<script>
+let seconds = 0;
+setInterval(function(){
+    seconds++;
+    document.getElementById("time1").innerText = seconds + "s";
+
+    if(seconds >= 10){ 
+        let sla = document.getElementById("sla1");
+        sla.innerText = "Vencido";
+        sla.className = "sla-expired";
+    }
+}, 1000);
+</script>
+</body>
+</html>
+</div>
+<div id="cerrados" class="seccion">
+    <h3 class="titulo-respuesta">Respuesta del Técnico</h3>
+    <div class="card-respuesta">
+        <div class="info-ticket">
+            <span><strong>Ticket:</strong> #001</span>
+            <span><strong>Estado:</strong> <span class="estado abierto">Abierto</span></span>
+        </div>
+        <div class="mensaje-tecnico">
+            <p>
+                El técnico se encuentra revisando el problema reportado. 
+                Se han identificado posibles fallos en el servicio de impresión 
+                y se está trabajando en la solución.
+            </p>
+        </div>
+        <div class="footer-respuesta">
+            <span>👨‍💻 Técnico: Juan Pérez</span>
+            <span>🕒 Última actualización: 14/02/2026 - 10:45 AM</span>
+        </div>
+    </div>
+</div>
+    <div id="nuevo" class="seccion">
+        <h3>Nuevo Ticket</h3>
+        <h1>Registro</h1>
+        <h3>Crear Ticket</h3>
+        <!-- FORMULARIO CORREGIDO -->
+<div id="nuevo" class="seccion">
+    <h3>Nuevo Ticket</h3>
+    <form action="#" method="post" enctype="multipart/form-data">
+        <label>Nombre</label>
+        <input type="text" placeholder="Ingresa tu nombre" required>
+        <label>Correo Electrónico</label>
+        <input type="email" placeholder="Ingresa tu correo" required>
+        <label>Número de Teléfono</label>
+        <input type="tel" placeholder="Ingresa tu teléfono" required>
+        <label>Resumen del Caso</label>
+        <input type="text" required>
+        <label>Agregar Archivo</label>
+        <input type="file">
+        <button type="submit">Enviar Ticket</button>
+    </form>
+</div>
+<script>
+function mostrar(id, boton){
+    document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('activa');
+    boton.classList.add('active');
+}
+</script>
+    </div>
+        <div id="conocimientos" class="seccion">
+            <h3>Base de Conocimientos</h3>
+            <p>Encuentra soluciones a problemas comunes y guías de autoayuda.</p>
+        </div>
+        <div id="archivos" class="seccion">
+            <label for="archivo">Agregar Archivo</label>
+            <input type="file"  id="archivo" name="archivo">
+
+        <button type="submit">Enviar Ticket</button>
+    </div>
+    <section class="features">
+        <div class="card">
+            <h3>📩 Crear Incidencias</h3>
+            <p>Registra problemas técnicos o solicitudes de soporte de manera rápida y sencilla.</p>
+        </div>
+        <div class="card">
+            <h3>📊 Seguimiento</h3>
+            <p>Consulta el estado de tus tickets en tiempo real y recibe notificaciones.</p>
+        </div>
+        <div class="card">
+            <h3>👨‍💻 Soporte Técnico</h3>
+            <p>Comunícate directamente con el equipo de soporte para resolver tus problemas.</p>
+        </div>
+    </section>
+    <footer>
+        © 2026 Sistema de Mesa de Ayuda | Universidad Tecnológica de El Salvador
+    </footer>
+</body>
+</html>
