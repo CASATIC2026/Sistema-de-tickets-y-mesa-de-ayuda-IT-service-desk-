@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de conocimiento</title>
+    <style>
+        /* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* BODY */
+body {
+    min-height: 100vh;
+    background: linear-gradient(120deg, #5d7fa1, #1e40af);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* FAQ al lado derecho */
+    padding: 15px 40px;
+}
+
+/* HEADER PRINCIPAL - Path Supoort centrado */
+header {
+    width: 100%;
+    background-color: white;
+    padding: 25px 30px; /* más pequeño */
+    color: black;
+    font-size: 30px; /* más pequeño */
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-align: center;
+    border-radius: 0 0 25px 25px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    margin-bottom: 30px;
+}
+
+/* TITULOS PRINCIPALES */
+h1 {
+    color: #0b0a79;
+    text-align: center;
+    margin-bottom: 8px;
+    font-size: 25px; /* más pequeño */
+}
+
+h4 {
+    color: #0c0c0c;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 16px; /* más pequeño */
+}
+
+/* FAQ CONTENEDOR */
+.faq {
+    width: 50%; /* más pequeño */
+    max-width: 700px; /* más pequeño */
+}
+
+/* CADA FAQ ITEM */
+.faq-item {
+    background: white;
+    border-radius: 15px; /* un poco menos redondeado */
+    margin-bottom: 12px;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.faq-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+/* BOTONES DE PREGUNTA */
+.faq-question {
+    width: 100%;
+    text-align: left;
+    padding: 10px 15px; /* menos padding */
+    font-size: 14px; /* más pequeño */
+    font-weight: bold;
+    background-color: white;
+    color: rgb(17, 15, 15);
+    border: none;
+    cursor: pointer;
+    outline: none;
+    transition: 0.3s;
+}
+
+.faq-question:hover {
+    background: linear-gradient(90deg, #fc913a, #ff7e5f);
+}
+
+/* RESPUESTA OCULTA */
+.faq-answer {
+    display: none;
+    padding: 12px 18px; /* menos padding */
+    font-size: 12px; /* más pequeño */
+    color: #333;
+    line-height: 1.5;
+    background: #fff4f4;
+    border-top: 1px solid #ff4e50;
+}
+
+/* SHOW CLASS PARA JS */
+.faq-item.active .faq-answer {
+    display: block;
+}
+
+/* ESTILOS DE LISTAS DENTRO DE RESPUESTAS */
+.faq-answer ol, .faq-answer ul {
+    margin-left: 15px;
+    margin-bottom: 6px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    body {
+        padding: 15px 20px;
+    }
+
+    header {
+        font-size: 22px;
+        padding: 15px 20px;
+    }
+
+    .faq {
+        width: 70%;
+    }
+}
+
+@media (max-width: 768px) {
+    .faq-question {
+        font-size: 13px;
+        padding: 12px 15px;
+    }
+
+    .faq-answer {
+        font-size: 11px;
+        padding: 12px 15px;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Path Supoort</h1>
+    </header>
+
+
+    <h1>Mesa de Ayuda y ticket</h1><br>
+
+    <h4>Hacer clic para ver las respuestas a las preguntas frecuentes</h4><br>
+
+
+
+    <div class="faq">
+        <h3>Acceso y contraseña</h3>
+        <div class="faq-item"> 
+            <button class="faq-question">1️⃣¿Como recuperar mi contraseña?</button>
+            <div class="faq-answer">
+                Si olvidaste tu contraseña, sigue estos pasos:  
+
+1. Haz clic en "Iniciar Sesión".
+
+2. Selecciona la opción "¿Olvidaste tu contraseña?".
+
+3. Ingresa tu correo electrónico registrado.
+
+4. Revisa tu bandeja de entrada (y carpeta de spam).
+
+5. Sigue el enlace enviado para crear una nueva contraseña.
+
+⚠️ Si no recibes el correo en 5 minutos, verifica que escribiste correctamente tu email o contacta al soporte técnico.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">2️⃣ No puedo iniciar sesión ¿que hago?</button>
+            <div class="faq-answer">
+                Si no puedes acceder a tu cuenta:
+
+1. Verifica que tu usuario y contraseña estén escritos correctamente.
+
+2. Revisa que no tengas activada la tecla Bloq Mayús.
+
+3. Intenta restablecer tu contraseña.
+
+4. Borra la caché del navegador o intenta desde otro navegador.
+
+Si el problema continúa, puede tratarse de un bloqueo temporal. Contacta al equipo de soporte.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">3️⃣ ¿Cada cuanto debo cambiar mi contraseña?</button>
+            <div class="faq-answer">
+                Por seguridad, se recomienda cambiar la contraseña:
+
+1. Cada 90 días (3 meses).
+
+2. Inmediatamente si sospechas que alguien más tuvo acceso a tu cuenta.
+
+3. Después de usar tu cuenta en un equipo público.
+
+Usa siempre contraseñas seguras que incluyan:
+
+1. Letras mayúsculas y minúsculas
+
+2. Números
+
+3. Caracteres especiales
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button type="button" class="faq-question">4️⃣ ¿Porque mi cuenta esta bloqueada?</button>
+            <div class="faq-answer">
+                Tu cuenta puede bloquearse por:
+
+1. Múltiples intentos fallidos de inicio de sesión.
+
+2. Actividad sospechosa detectada por el sistema.
+
+3. Incumplimiento de las políticas de uso.
+
+El bloqueo es una medida de seguridad para proteger tu información.
+
+Puedes esperar el tiempo de desbloqueo automático o contactar al soporte técnico.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">5️⃣ ¿Cuantos intentos fallidos hay antes de bloquear la cuenta?</button>
+            <div class="faq-answer">
+                El sistema permite 5 intentos fallidos consecutivos.
+
+Después del quinto intento incorrecto:
+
+1. La cuenta se bloqueará automáticamente.
+
+2. El bloqueo puede durar entre 15 y 30 minutos.
+
+3. También puedes desbloquearla usando la opción de recuperación de contraseña.
+            </div>
+        </div>
+
+        <h3>Dudas y fallas con ticket</h3>
+        <div class="faq-item">
+            <button class="faq-question">1️⃣ ¿Como crear un ticket?</button>
+            <div class="faq-answer">
+                Para crear un ticket de soporte:
+
+1. Inicia sesión en tu cuenta.
+
+2. Haz clic en la opción “Crear Ticket” en el menú principal.
+
+3. Completa el formulario con:
+
+* Categoría del problema.
+
+* Descripción detallada.
+
+* Prioridad (si aplica).
+
+4. Adjunta archivos o capturas de pantalla si es necesario.
+
+5. Presiona “Enviar”.
+
+Una vez enviado, recibirás un número de ticket para dar seguimiento.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">2️⃣ ¿Como reabrir el ticket cerrado?</button>
+            <div class="faq-answer">
+                Si tu ticket fue cerrado pero el problema continúa:
+
+1. Ve a la sección “Mis Tickets”.
+
+2. Busca el ticket cerrado.
+
+3. Haz clic en “Reabrir Ticket”.
+
+4. Agrega un comentario explicando por qué necesitas reabrirlo.
+
+⚠️ Solo se pueden reabrir tickets dentro de los 7 días posteriores al cierre.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">3️⃣ ¿Como cancelar un ticket?</button>
+            <div class="faq-answer">
+                Si ya no necesitas asistencia:
+
+1. Ingresa a “Mis Tickets”.
+
+2. Selecciona el ticket activo.
+
+3. Haz clic en “Cancelar Ticket”.
+
+4. Confirma la cancelación.
+
+El estado cambiará a Cancelado y no será procesado por el equipo técnico.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">4️⃣ ¿Tiempo de espera?</button>
+            <div class="faq-answer">
+                El tiempo de respuesta depende de la prioridad:
+
+🔴 Alta: 1–4 horas.
+
+🟡 Media: 4–8 horas.
+
+🟢 Baja: 24 horas.
+
+El equipo de soporte atiende tickets en horario laboral.
+Recibirás notificaciones cuando haya actualizaciones.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">5️⃣ ¿Maximo de tickets por dia?</button>
+            <div class="faq-answer">
+                Para garantizar una atención adecuada:
+
+* Cada usuario puede crear hasta 5 tickets por día.
+
+* Si necesitas reportar múltiples problemas relacionados, se recomienda incluirlos en un solo ticket detallado.
+
+En casos especiales, el límite puede ampliarse previa autorización.
+            </div>
+        </div>
+
+        <h3>Problemas con la Computadora</h3>
+        <div class="faq-item">
+            <button class="faq-question">1️⃣ Mi computadora esta muy lenta ¿que hago?</button>
+            <div class="faq-answer">
+                Si tu equipo funciona con lentitud, intenta lo siguiente:
+
+1. Reinicia la computadora.
+
+2. Cierra programas que no estés utilizando.
+
+3. Verifica el uso de CPU y memoria en el Administrador de tareas.
+
+4. Elimina archivos temporales.
+
+5. Revisa si hay actualizaciones pendientes del sistema.
+
+Si el problema continúa, puede tratarse de falta de memoria RAM, virus o poco espacio en disco. En ese caso, crea un ticket de soporte.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">2️⃣ La pantalla se queda en negro ¿como lo soluciono?</button>
+            <div class="faq-answer">
+                Si la pantalla se queda en negro:
+
+* Verifica que el monitor esté encendido.
+
+* Revisa los cables de conexión (HDMI o VGA).
+
+* Reinicia el equipo.
+
+* Si es laptop, prueba conectarla a un monitor externo.
+
+Si el equipo enciende pero no muestra imagen, podría tratarse de un problema de tarjeta gráfica o sistema operativo.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">3️⃣ Mi equipo no enciende ¿que hago?</button>
+            <div class="faq-answer">
+                Sigue estos pasos:
+
+1. Verifica que esté conectado a la corriente.
+
+2. Revisa que el cargador funcione correctamente.
+
+3. Intenta presionar el botón de encendido por 10 segundos.
+
+4. Si es laptop, prueba retirar la batería (si es removible).
+
+Si no hay señales de energía (luces o sonido), puede ser una falla de hardware. Reporta el incidente al área técnica.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">4️⃣ Se congelo el sistema ¿como lo reinicio correctamente?</button>
+            <div class="faq-answer">
+                Si el sistema no responde:
+
+1. Presiona Ctrl + Alt + Supr.
+
+2. Selecciona Administrador de tareas.
+
+3. Finaliza el programa que no responde.
+
+Si no funciona:
+
+* Mantén presionado el botón de encendido por 5–10 segundos hasta que el equipo se apague.
+
+* Espera unos segundos y vuelve a encenderlo.
+
+Evita apagar el equipo desconectándolo directamente, ya que puede causar daños en el sistema.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">5️⃣ Como libero espacio en disco duro</button>
+            <div class="faq-answer">
+                Para liberar espacio:
+
+Vacía la papelera de reciclaje.
+
+1. Elimina archivos y programas que no uses.
+
+2. Usa la herramienta Liberador de espacio en disco.
+
+3. Guarda archivos grandes en una unidad externa o en la nube.
+
+4. Se recomienda mantener al menos un 20% del disco libre para un mejor rendimiento.
+            </div>
+        </div>
+
+        <h3>Internet y Red</h3>
+        <div class="faq-item">
+            <button class="faq-question">1️⃣ No tengo internet ¿que puedo revisar?</button>
+            <div class="faq-answer">
+                Si no tienes conexión a internet, verifica lo siguiente:
+
+1. Confirma que el cable de red esté conectado correctamente (si usas conexión por cable).
+
+2. Revisa que el WiFi esté activado en tu dispositivo.
+
+3. Reinicia el módem y el router (espera 30 segundos antes de encenderlos nuevamente).
+
+4. Verifica si otros dispositivos tienen conexión.
+
+Si ningún dispositivo tiene internet, puede tratarse de una falla del proveedor de servicio. Si solo tu equipo presenta el problema, crea un ticket de soporte.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">2️⃣ El wifi esta muy lento ¿que puedo hacer?</button>
+            <div class="faq-answer">
+                Si la conexión es lenta:
+
+* Acércate al router para mejorar la señal.
+
+* Reinicia el router.
+
+* Cierra aplicaciones o descargas en segundo plano.
+
+* Verifica que no haya muchas personas conectadas a la red.
+
+* Ejecuta una prueba de velocidad.
+
+Si el problema persiste, puede deberse a interferencias, saturación de red o limitaciones del plan contratado.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">3️⃣ No puedo conectarme a la VPN ¿como lo soluciono?</button>
+            <div class="faq-answer">
+                Si no puedes acceder a la VPN:
+
+1. Verifica que tengas conexión a internet.
+
+2. Confirma que tu usuario y contraseña sean correctos.
+
+3. Asegúrate de que la aplicación VPN esté actualizada.
+
+4. Reinicia el equipo e intenta nuevamente.
+
+Si el error continúa, puede tratarse de credenciales vencidas o problemas del servidor VPN. Contacta al área de soporte.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">4️⃣ ¿Como cambio mi contraseña del Wifi</button>
+            <div class="faq-answer">
+                Para cambiar la contraseña del WiFi:
+
+1. Ingresa al navegador y escribe la dirección del router (por ejemplo: 192.168.1.1).
+
+2. Inicia sesión con el usuario y contraseña del administrador.
+
+3. Busca la sección Configuración inalámbrica o Wireless.
+
+4. Cambia la contraseña y guarda los cambios.
+
+5. Reconecta tus dispositivos con la nueva contraseña.
+
+⚠️ Si no conoces las credenciales del router, consulta al proveedor de internet o al área técnica.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">5️⃣ ¿Porque se cae la conexión constantemente?</button>
+            <div class="faq-answer">
+                La conexión puede interrumpirse por:
+
+* Señal WiFi débil.
+
+* Interferencias de otros dispositivos electrónicos.
+
+* Problemas con el proveedor de internet.
+
+* Router desactualizado o defectuoso.
+
+Se recomienda reiniciar el equipo de red y verificar cables.
+Si las desconexiones son frecuentes, reporta el incidente para revisión técnica.
+            </div>
+        </div>
+
+        <h3>Impresoras</h3>
+        <div class="faq-item">
+            <button class="faq-question">1️⃣ La impresora no imprime ¿que hago?</button>
+            <div class="faq-answer">
+                Si la impresora no responde:
+
+1. Verifica que esté encendida.
+
+2. Comprueba que esté conectada correctamente (USB o red WiFi).
+
+3. Asegúrate de que tenga papel y tinta o tóner.
+
+4. Revisa si hay documentos en cola de impresión.
+
+5. Reinicia la impresora y el equipo.
+
+Si el problema continúa, puede tratarse de un error de controlador o configuración. En ese caso, crea un ticket de soporte.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question">2️⃣ Sale el mensaje "impresora sin conexion", ¿como lo soluciono?</button>
+            <div class="faq-answer">
+                Este mensaje aparece cuando el equipo no detecta la impresora.
+
+Solución:
+
+1. Verifica que la impresora esté encendida.
+
+2. Confirma que esté conectada a la misma red WiFi que tu computadora.
+
+3. Reinicia la impresora y el router.
+
+4. En tu computadora, ve a Dispositivos e impresoras y selecciona “Usar impresora en línea”.
+
+Si sigue apareciendo el error, reinstala el controlador de la impresora.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">3️⃣ ¿Como instalo una impresora en mi equipo?</button>
+            <div class="faq-answer">
+                Para instalar una impresora:
+
+1. Conecta la impresora al equipo (USB o red).
+
+2. Ve a Configuración → Dispositivos → Impresoras y escáneres.
+
+3. Haz clic en Agregar una impresora o escáner.
+
+4. Selecciona la impresora detectada y sigue las instrucciones.
+
+Si no aparece automáticamente, descarga el controlador desde el sitio oficial del fabricante.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">4️⃣ Se atasco el papel, ¿que debo de hacer?</button>
+            <div class="faq-answer">
+                Si hay un atasco de papel:
+
+1. Apaga la impresora.
+
+2. Abre la tapa con cuidado.
+
+3. Retira el papel atascado lentamente, sin romperlo.
+
+4. Verifica que no queden restos de papel.
+
+5. Cierra la tapa y vuelve a encender la impresora.
+
+⚠️ Nunca tires el papel con fuerza, ya que puede dañar los rodillos internos.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">5️⃣ Como escaneo documentos</button>
+            <div class="faq-answer">
+                Para escanear un documento:
+
+1. Coloca el documento en el escáner o bandeja superior.
+
+2. Abre el software de la impresora en tu computadora.
+
+3. Selecciona la opción Escanear.
+
+4. Elige el formato de archivo (PDF o imagen).
+
+5. Guarda el documento en la ubicación deseada.
+
+Si la impresora es multifuncional y está conectada en red, también puedes escanear directamente a tu correo electrónico (si está configurado).
+            </div>
+        </div>
+
+        <h3>Correo electrónico</h3>
+        <div class="faq-item">
+            <button class="faq-question">1️⃣ No puedo enviar correos ¿que hago?</button>
+            <div class="faq-answer">
+                Si no puedes enviar correos electrónicos:
+
+1. Verifica tu conexión a internet.
+
+2. Confirma que la dirección del destinatario esté escrita correctamente.
+
+3. Revisa que el archivo adjunto no exceda el tamaño permitido.
+
+4. Cierra sesión y vuelve a iniciar sesión.
+
+5. Verifica que tu cuenta no esté bloqueada o suspendida.
+
+Si aparece un mensaje de error específico, incluye ese detalle al crear un ticket de soporte.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">2️⃣ No estoy recibiendo correos ¿que paso?</button>
+            <div class="faq-answer">
+                Si no recibes correos:
+
+* Revisa la carpeta de Spam o Correo no deseado.
+
+* Verifica que tu buzón no esté lleno.
+
+* Confirma que el remitente escribió correctamente tu dirección.
+
+* Asegúrate de no tener filtros automáticos que redirijan los mensajes.
+
+Si el problema persiste, puede tratarse de una falla del servidor de correo.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">3️⃣ Mi buzon esta lleno ¿como lo limpio?</button>
+            <div class="faq-answer">
+                Para liberar espacio en tu correo:
+
+1. Elimina correos antiguos o innecesarios.
+
+2. Vacía la carpeta de Papelera.
+
+3. Elimina archivos adjuntos grandes.
+
+4. Revisa la carpeta de Spam y elimínala si es necesario.
+
+Se recomienda mantener el buzón con al menos un 20% de espacio disponible para evitar bloqueos.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">4️⃣ Como configuro mi correo en mi celular</button>
+            <div class="faq-answer">
+                Para configurar tu correo en un dispositivo móvil:
+
+1. Ve a Configuración → Cuentas → Agregar cuenta.
+
+2. Selecciona el tipo de cuenta (Gmail, Outlook u otra).
+
+3. Ingresa tu correo y contraseña.
+
+4. Sigue las instrucciones en pantalla.
+
+Si la configuración automática falla, puede ser necesario ingresar manualmente los datos del servidor (IMAP, POP y SMTP). Consulta al área técnica si no cuentas con esta información.
+            </div>
+        </div>
+        
+        <div class="faq-item">
+            <button class="faq-question">5️⃣ ¿Porque mis correos llegan a spam?</button>
+            <div class="faq-answer">
+                Los correos pueden enviarse a spam por:
+
+* Uso excesivo de enlaces o palabras promocionales.
+
+* Adjuntos sospechosos.
+
+* Falta de autenticación del dominio.
+
+* Mala reputación del remitente.
+
+Para evitarlo:
+
+* Usa asuntos claros y profesionales.
+
+* Evita escribir en mayúsculas.
+
+* No incluyas demasiados enlaces.
+
+* Pide a los destinatarios que agreguen tu correo como contacto seguro.
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/funcionBase.js"></script>
+</body>
+</html>

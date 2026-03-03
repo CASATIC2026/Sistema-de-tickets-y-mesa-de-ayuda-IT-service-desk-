@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Login</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+form {
+    background: white;
+    padding: 30px 25px;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    width: 320px;
+    box-sizing: border-box;
+    margin: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    color: #ff4b5c;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px 8px;
+    margin-top: 5px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+    border-color: #ff4b5c;
+    box-shadow: 0 0 8px rgba(255, 75, 92, 0.5);
+}
+
+button {
+    margin-top: 20px;
+    padding: 12px;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(90deg, #ff4b5c, #ff914d);
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: linear-gradient(90deg, #ff914d, #ff4b5c);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+</style>
+</head>
+<body>
+
+<form onsubmit="login(event)">
+    <h2>Iniciar Sesión</h2>
+
+    <label for="correo">Correo:</label>
+    <input type="email" id="correo" name="correo" required>
+
+    <label for="contrasena">Contraseña:</label>
+    <input type="password" id="password" name="contrasena" required>
+
+    <button type="submit">Ingresar</button>
+</form>
+
+<script>
+function login(event) {
+    event.preventDefault(); // Evita que el form recargue
+
+    const correo = document.getElementById("correo").value;
+    const password = document.getElementById("password").value;
+
+    fetch("http://localhost:5044/api/Auth/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            correo: correo,
+            password: password
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Credenciales incorrectas");
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Guardamos datos del usuario
+        localStorage.setItem("usuarioId", data.id);
+        localStorage.setItem("rol", data.rol);
+
+        // Redirección por rol
+        if (data.rol === "Solicitante") {
+            window.location.href = "inicio.html";
+        } else if (data.rol === "Tecnico") {
+           window.location.href = "http://127.0.0.1:5500/frontend/administador/tecnico.html";
+        } else if (data.rol === "Admin") {
+            window.location.href = "admin.html";
+        }
+    })
+    .catch(error => {
+        alert(error.message);
+    });
+}
+</script>
+</body>
+</html>

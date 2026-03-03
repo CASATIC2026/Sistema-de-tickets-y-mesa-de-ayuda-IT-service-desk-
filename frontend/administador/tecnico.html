@@ -1,191 +1,181 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Técnico - IT Service Desk</title>
+    <meta charset="UTF-8">
+    <title>Tecnico</title>
 
-<style>
+    <style>
+        /* RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
 
-body{
-    font-family: Arial, Helvetica, sans-serif;
-    background:#f4f6f9;
-    margin:0;
-}
+        /* COLORES */
+        :root {
+            --azul-oscuro: #0d1b2a;
+            --azul-medio: #1b263b;
+            --azul-claro: #415a77;
+            --gris-claro: #f4f6f8;
+            --blanco: #ffffff;
+            --verde: #2a9d8f;
+        }
 
-header{
-    background:#1e3a8a;
-    color:white;
-    padding:15px 30px;
-    font-size:20px;
-}
+        body {
+            background-color: var(--gris-claro);
+            color: var(--azul-oscuro);
+        }
 
-.container{
-    padding:40px;
-}
+        header {
+            background-color: var(--azul-oscuro);
+            color: var(--blanco);
+            padding: 20px;
+            text-align: center;
+        }
 
-h2{
-    margin-bottom:20px;
-}
+        header h1 {
+            font-size: 26px;
+        }
 
-table{
-    width:100%;
-    border-collapse:collapse;
-    background:white;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
+        header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
 
-th, td{
-    padding:12px;
-    border-bottom:1px solid #ddd;
-    text-align:center;
-}
+        main {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
 
-th{
-    background:#1e3a8a;
-    color:white;
-}
+        section {
+            background-color: var(--blanco);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
 
-.priority-low{
-    background:#d1fae5;
-    color:#065f46;
-    padding:5px 10px;
-    border-radius:20px;
-}
+        section h2 {
+            margin-bottom: 15px;
+            color: var(--azul-medio);
+        }
 
-.priority-medium{
-    background:#fef3c7;
-    color:#92400e;
-    padding:5px 10px;
-    border-radius:20px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-.priority-high{
-    background:#fee2e2;
-    color:#991b1b;
-    padding:5px 10px;
-    border-radius:20px;
-}
+        thead {
+            background-color: var(--azul-claro);
+            color: var(--blanco);
+        }
 
-.status-open{
-    color:#2563eb;
-    font-weight:bold;
-}
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
 
-.status-progress{
-    color:#d97706;
-    font-weight:bold;
-}
+        tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+        }
 
-.status-closed{
-    color:#059669;
-    font-weight:bold;
-}
+        tbody tr:hover {
+            background-color: #f1f5f9;
+        }
 
-.sla-normal{
-    background:#d1fae5;
-    color:#065f46;
-    padding:5px 10px;
-    border-radius:20px;
-    font-weight:bold;
-}
+        form {
+            display: flex;
+            flex-direction: column;
+        }
 
-.sla-warning{
-    background:#fef3c7;
-    color:#92400e;
-    padding:5px 10px;
-    border-radius:20px;
-    font-weight:bold;
-}
+        label {
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
 
-.sla-expired{
-    background:#fee2e2;
-    color:#991b1b;
-    padding:5px 10px;
-    border-radius:20px;
-    font-weight:bold;
-}
+        input, textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+        }
 
-.time{
-    font-weight:bold;
-}
+        button {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: var(--verde);
+            color: var(--blanco);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+        }
 
-</style>
+        button:hover {
+            background-color: #21867a;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+
 </head>
-
 <body>
 
 <header>
-🎫 Dashboard Técnico - Mesa de Ayuda
+    <h1>Panel del Técnico</h1>
+    <p>Gestión y resolución de tickets</p>
 </header>
 
-<div class="container">
+<main>
 
-<h2>📋 Bandeja de Tickets</h2>
+    <!-- LISTA DE TICKETS -->
+    <section>
+        <h2>Tickets Abiertos</h2>
 
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Título</th>
-<th>Prioridad</th>
-<th>Estado</th>
-<th>Tiempo Abierto</th>
-<th>SLA</th>
-</tr>
-</thead>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Prioridad</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody id="listaTickets">
+                <!-- Cargados desde backend -->
+            </tbody>
+        </table>
+    </section>
 
-<tbody>
+    <!-- RESPUESTA -->
+    <section>
+        <h2>Responder Ticket</h2>
 
-<tr>
-<td>001</td>
-<td>Error impresora oficina</td>
-<td><span class="priority-high">Crítico</span></td>
-<td><span class="status-open">Abierto</span></td>
-<td class="time" id="time1">0s</td>
-<td><span id="sla1" class="sla-warning">Por vencer</span></td>
-</tr>
+        <form>
+            <label>ID del Ticket</label>
+            <input type="number" placeholder="Ej: 1" required>
 
-<tr>
-<td>002</td>
-<td>Instalación Office</td>
-<td><span class="priority-medium">Media</span></td>
-<td><span class="status-progress">En Progreso</span></td>
-<td>1h 20m</td>
-<td><span class="sla-normal">En tiempo</span></td>
-</tr>
+            <label>Respuesta del Técnico</label>
+            <textarea rows="5" placeholder="Describa la solución..." required></textarea>
 
-<tr>
-<td>003</td>
-<td>Actualizar antivirus</td>
-<td><span class="priority-low">Baja</span></td>
-<td><span class="status-closed">Cerrado</span></td>
-<td>Resuelto</td>
-<td><span class="sla-normal">Cumplido</span></td>
-</tr>
+            <button type="submit">Enviar Respuesta</button>
+        </form>
+    </section>
 
-</tbody>
-</table>
+</main>
 
-</div>
-
-<script>
-
-let seconds = 0;
-
-setInterval(function(){
-    seconds++;
-    document.getElementById("time1").innerText = seconds + "s";
-
-    if(seconds >= 10){ 
-        let sla = document.getElementById("sla1");
-        sla.innerText = "Vencido";
-        sla.className = "sla-expired";
-    }
-
-}, 1000);
-
-</script>
+<footer>
+    Mesa de Ayuda © 2026
+</footer>
 
 </body>
 </html>
