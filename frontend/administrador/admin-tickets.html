@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Tickets</title>
+    <link rel="stylesheet" href="css/estilomistickets.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2563eb, #1e3a8a);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        header h1 {
+            font-size: 22px;
+        }
+
+        header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .header-actions a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+        }
+
+        .header-actions a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 25px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 32px;
+            color: #1e3a8a;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .stat-card.warning h3 { color: #d97706; }
+        .stat-card.danger h3 { color: #dc2626; }
+        .stat-card.success h3 { color: #059669; }
+
+        /* Section */
+        section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        section h2 {
+            background: #1e3a8a;
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .priority-high { background: #fee2e2; color: #991b1b; }
+        .priority-medium { background: #fef3c7; color: #92400e; }
+        .priority-low { background: #dcfce7; color: #166534; }
+
+        .status-open { background: #e0f2fe; color: #0369a1; }
+        .status-progress { background: #fef3c7; color: #92400e; }
+        .status-closed { background: #f3f4f6; color: #4b5563; }
+
+        .sla-normal { background: #dcfce7; color: #166534; }
+        .sla-warning { background: #fef3c7; color: #92400e; }
+        .sla-danger { background: #fee2e2; color: #991b1b; }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+
+        .btn-warning { background: #f59e0b; color: white; }
+        .btn-warning:hover { background: #d97706; }
+
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 3% auto;
+            padding: 0;
+            width: 90%;
+            max-width: 700px;
+            border-radius: 12px;
+            animation: modalAppear 0.3s ease;
+        }
+
+        @keyframes modalAppear {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            background: #1e3a8a;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .ticket-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .info-item span {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        /* Comments */
+        .comments-section {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .comments-section h4 {
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .chat-copy {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+
+        .chat-shell {
+            background: linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
+            border-radius: 10px;
+            border: 1px solid #dbeafe;
+            overflow: hidden;
+        }
+
+        .chat-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.82);
+            border-bottom: 1px solid #dbeafe;
+            color: #4b5563;
+            font-size: 12px;
+        }
+
+        .chat-messages {
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 16px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .comment {
+            max-width: 85%;
+            background: white;
+            padding: 12px;
+            border-radius: 14px;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
+            align-self: flex-start;
+        }
+
+        .comment.own {
+            align-self: flex-end;
+            background: #10b981;
+        }
+
+        .comment.tecnico:not(.own) {
+            border: 1px solid #bbf7d0;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .comment-header strong {
+            color: #1e3a8a;
+        }
+
+        .comment p {
+            color: #4b5563;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+
+        .comment.own .comment-header strong,
+        .comment.own .comment-header span,
+        .comment.own p {
+            color: white;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .comment-form textarea {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            resize: none;
+            min-height: 60px;
+        }
+
+        .comment-form button {
+            align-self: flex-end;
+        }
+
+        .comment-form button:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        /* Actions in modal */
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .modal-actions select {
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-actions {
+                margin-top: 10px;
+            }
+
+            .header-actions a {
+                margin: 0 10px;
+            }
+
+            table thead {
+                display: none;
+            }
+
+            table tbody tr {
+                display: block;
+                margin-bottom: 15px;
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                padding: 15px;
+            }
+
+            table tbody td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 0;
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+            table tbody td:last-child {
+                border-bottom: none;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            table tbody td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #1e3a8a;
+                font-size: 12px;
+            }
+
+            .btn-group {
+                width: 100%;
+            }
+
+            .btn-group .btn {
+                flex: 1;
+            }
+
+            .ticket-info {
+                grid-template-columns: 1fr;
+            }
+
+            .comment-form {
+                flex-direction: column;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .modal-actions select,
+            .modal-actions button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const rol = localStorage.getItem('rol');
+        if (!localStorage.getItem('token')) {
+            window.location.href = '../solicitante/Login.html';
+        } else if (rol === 'Tecnico') {
+            window.location.href = 'tecnico.html';
+        } else if (rol !== 'Admin') {
+            window.location.href = '../solicitante/inicio.html';
+        }
+    </script>
+
+    <header>
+        <div>
+            <h1>Panel de Tickets Admin</h1>
+            <p>Gestión general de tickets - <span id="nombreUsuario"></span></p>
+        </div>
+        <div class="header-actions">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="#" onclick="logout()">Cerrar sesión</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="totalTickets">0</h3>
+                <p>Total Tickets</p>
+            </div>
+            <div class="stat-card warning">
+                <h3 id="ticketsAbiertos">0</h3>
+                <p>Abiertos</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="ticketsProgreso">0</h3>
+                <p>En Progreso</p>
+            </div>
+            <div class="stat-card success">
+                <h3 id="ticketsResueltos">0</h3>
+                <p>Resueltos</p>
+            </div>
+            <div class="stat-card danger">
+                <h3 id="slaVencidos">0</h3>
+                <p>SLA Vencidos</p>
+            </div>
+        </div>
+
+        <!-- Tickets Table -->
+        <section>
+            <h2>Bandeja de Tickets</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Usuario</th>
+                            <th>Prioridad</th>
+                            <th>Estado</th>
+                            <th>SLA</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaTickets">
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px;">Cargando tickets...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        Mesa de Ayuda © 2026 - Path Support
+    </footer>
+
+    <!-- Modal Detalle -->
+    <div id="ticketModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Detalle del Ticket #<span id="modal-id"></span></h3>
+                <button class="modal-close" onclick="cerrarModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="ticket-info">
+                    <div class="info-item">
+                        <label>Título</label>
+                        <span id="modal-titulo"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Usuario</label>
+                        <span id="modal-usuario"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Estado</label>
+                        <span id="modal-estado"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Prioridad</label>
+                        <span id="modal-prioridad"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>SLA</label>
+                        <span id="modal-sla"></span>
+                    </div>
+                    <div class="info-item">
+                        <label>Técnico Asignado</label>
+                        <span id="modal-tecnico"></span>
+                    </div>
+                    <div class="info-item" style="grid-column: 1 / -1;">
+                        <label>Descripción</label>
+                        <span id="modal-descripcion"></span>
+                    </div>
+                </div>
+
+                <!-- Comments -->
+                <div class="comments-section">
+                    <h4>Chat del Ticket</h4>
+                    <p class="chat-copy">Conversación entre solicitante y técnico para avanzar la solución del ticket.</p>
+                    <div class="chat-shell">
+                        <div class="chat-status">
+                            <span id="chatStatus">Cargando conversación...</span>
+                            <span id="chatUpdatedAt">-</span>
+                        </div>
+                        <div id="comentariosList" class="chat-messages"></div>
+                    </div>
+                    <div class="comment-form">
+                        <textarea id="nuevoComentario" placeholder="Escribe un comentario..."></textarea>
+                        <button id="btnEnviarComentario" class="btn btn-primary" onclick="enviarComentario()">Enviar</button>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="modal-actions">
+                    <select id="cambiarEstado">
+                        <option value="">Cambiar estado...</option>
+                        <option value="Abierto">Abierto</option>
+                        <option value="En Progreso">En Progreso</option>
+                        <option value="Resuelto">Resuelto</option>
+                        <option value="Cerrado">Cerrado</option>
+                    </select>
+                    <button class="btn btn-success" onclick="actualizarEstado()">Actualizar Estado</button>
+                    <select id="selectorTecnico" style="display: none;">
+                        <option value="">Asignar a técnico...</option>
+                    </select>
+                    <button id="btnAsignarTicket" class="btn btn-warning" style="display: none;" onclick="asignarTicketAdmin()">Asignar Ticket</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+<script src="../js/funcionBase.js"></script>
+<script>
+        API_BASE_URL = window.API_BASE_URL;  // viene de ../js/config.js
+        const REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
+        const AUTO_REFRESH_MS = 5000;
+        let ticketActual = null;
+        let comentariosInterval = null;
+        let tecnicosDisponibles = [];
+        let ticketsRefreshInterval = null;
+
+        // Mostrar nombre
+        document.getElementById('nombreUsuario').textContent = localStorage.getItem('nombre') || '';
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '../solicitante/Login.html';
+        }
+
+        function getAuthHeaders() {
+            const token = localStorage.getItem('token');
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+        }
+
+        function escapeHtml(text) {
+            return (text || '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        function actualizarEstadoChat(mensaje) {
+            document.getElementById('chatStatus').textContent = mensaje;
+            document.getElementById('chatUpdatedAt').textContent = `Actualizado ${new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
+        }
+
+        function esAdmin() {
+            return localStorage.getItem('rol') === 'Admin';
+        }
+
+        function notifyDataChanged(scope = 'tickets', ticketId = null) {
+            localStorage.setItem(REFRESH_EVENT_KEY, JSON.stringify({
+                scope,
+                ticketId,
+                timestamp: Date.now()
+            }));
+        }
+
+        function getPriorityClass(p) {
+            switch(p?.toLowerCase()) {
+                case 'alta': case 'critico': return 'priority-high';
+                case 'media': return 'priority-medium';
+                case 'baja': return 'priority-low';
+                default: return 'priority-medium';
+            }
+        }
+
+        function getStatusClass(s) {
+            switch(s) {
+                case 'Abierto': return 'status-open';
+                case 'En Progreso': return 'status-progress';
+                case 'Resuelto': case 'Cerrado': return 'status-closed';
+                default: return '';
+            }
+        }
+
+        function getSlaClass(s) {
+            switch(s) {
+                case 'Vencido': return 'sla-danger';
+                case 'Por vencer': return 'sla-warning';
+                default: return 'sla-normal';
+            }
+        }
+
+        async function cargarTickets() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/Tickets`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (!response.ok) {
+                    throw new Error('No se pudieron cargar los tickets');
+                }
+
+                const tickets = await response.json();
+                const tabla = document.getElementById('tablaTickets');
+
+                // Stats
+                document.getElementById('totalTickets').textContent = tickets.length;
+                document.getElementById('ticketsAbiertos').textContent = tickets.filter(t => t.estado === 'Abierto').length;
+                document.getElementById('ticketsProgreso').textContent = tickets.filter(t => t.estado === 'En Progreso').length;
+                document.getElementById('ticketsResueltos').textContent = tickets.filter(t => t.estado === 'Resuelto' || t.estado === 'Cerrado').length;
+                document.getElementById('slaVencidos').textContent = tickets.filter(t => t.slaStatus === 'Vencido').length;
+
+                if (tickets.length === 0) {
+                    tabla.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">No hay tickets</td></tr>';
+                    return;
+                }
+
+                tabla.innerHTML = '';
+                tickets.forEach(t => {
+                    const fecha = new Date(t.fechaCreacion).toLocaleDateString('es-ES');
+                    tabla.innerHTML += `
+                        <tr>
+                            <td data-label="ID">${t.id}</td>
+                            <td data-label="Título">${t.titulo}</td>
+                            <td data-label="Usuario">${t.usuarioNombre || 'N/A'}</td>
+                            <td data-label="Prioridad"><span class="badge ${getPriorityClass(t.prioridad)}">${t.prioridad || 'Media'}</span></td>
+                            <td data-label="Estado"><span class="badge ${getStatusClass(t.estado)}">${t.estado || 'Abierto'}</span></td>
+                            <td data-label="SLA"><span class="badge ${getSlaClass(t.slaStatus)}">${t.slaStatus || 'Sin SLA'}</span></td>
+                            <td data-label="Fecha">${fecha}</td>
+                            <td data-label="Acciones">
+                                <div class="btn-group">
+                                    <button class="btn btn-primary" onclick="verDetalle(${t.id})">Ver</button>
+                                </div>
+                            </td>
+                        </tr>`;
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function verDetalle(id) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/Tickets/${id}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar el ticket');
+                }
+
+                const ticket = await response.json();
+                ticketActual = ticket;
+
+                document.getElementById('modal-id').textContent = ticket.id;
+                document.getElementById('modal-titulo').textContent = ticket.titulo;
+                document.getElementById('modal-usuario').textContent = ticket.usuarioNombre || 'N/A';
+                document.getElementById('modal-estado').textContent = ticket.estado || 'Abierto';
+                document.getElementById('modal-prioridad').textContent = ticket.prioridad || 'Media';
+                document.getElementById('modal-sla').textContent = ticket.slaStatus || 'Sin SLA';
+                document.getElementById('modal-tecnico').textContent = ticket.tecnicoNombre || 'Sin asignar';
+                document.getElementById('modal-descripcion').textContent = ticket.descripcion;
+                configurarAccionesDeAsignacion(ticket);
+
+                document.getElementById('ticketModal').style.display = 'block';
+                await cargarComentarios();
+                iniciarAutoRefreshComentarios();
+            } catch (error) {
+                alert('Error cargando ticket');
+                console.error(error);
+            }
+        }
+
+        function cerrarModal() {
+            document.getElementById('ticketModal').style.display = 'none';
+            if (comentariosInterval) {
+                clearInterval(comentariosInterval);
+                comentariosInterval = null;
+            }
+            ticketActual = null;
+        }
+
+        async function cargarComentarios() {
+            if (!ticketActual) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/Comentarios/ticket/${ticketActual.id}`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar la conversación');
+                }
+
+                const comentarios = await response.json();
+                renderComentarios(comentarios);
+                actualizarEstadoChat(comentarios.length > 0 ? 'Conversación activa' : 'Sin mensajes todavía');
+            } catch (error) {
+                console.error(error);
+                document.getElementById('comentariosList').innerHTML = '<p style="color: #6b7280; text-align: center;">No fue posible cargar el chat.</p>';
+                actualizarEstadoChat('Chat no disponible');
+            }
+        }
+
+        async function cargarTecnicosDisponibles() {
+            if (!esAdmin()) return;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/Auth/tecnicos`, {
+                    headers: getAuthHeaders()
+                });
+
+                if (!response.ok) {
+                    throw new Error('No se pudieron cargar los técnicos');
+                }
+
+                tecnicosDisponibles = await response.json();
+            } catch (error) {
+                console.error('Error cargando técnicos:', error);
+                tecnicosDisponibles = [];
+            }
+        }
+
+        function configurarAccionesDeAsignacion(ticket) {
+            const selector = document.getElementById('selectorTecnico');
+            const botonAsignar = document.getElementById('btnAsignarTicket');
+
+            if (!esAdmin()) {
+                selector.style.display = 'none';
+                botonAsignar.style.display = 'none';
+                return;
+            }
+
+            selector.style.display = 'inline-block';
+            botonAsignar.style.display = 'inline-block';
+            selector.innerHTML = '<option value="">Asignar a técnico...</option>';
+
+            tecnicosDisponibles.forEach(tecnico => {
+                const option = document.createElement('option');
+                option.value = tecnico.id;
+                option.textContent = `${tecnico.nombre} (${tecnico.rol})`;
+                if (ticket.tecnicoAsignadoId === tecnico.id) {
+                    option.selected = true;
+                }
+                selector.appendChild(option);
+            });
+        }
+
+        function renderComentarios(comentarios) {
+            const comentariosDiv = document.getElementById('comentariosList');
+            const usuarioId = parseInt(localStorage.getItem('usuarioId') || '0', 10);
+
+            if (!comentarios || comentarios.length === 0) {
+                comentariosDiv.innerHTML = '<p style="color: #6b7280; text-align: center;">No hay comentarios aún</p>';
+                return;
+            }
+
+            comentariosDiv.innerHTML = comentarios.map(c => `
+                <div class="comment ${c.usuarioRol === 'Tecnico' || c.usuarioRol === 'Admin' ? 'tecnico' : ''} ${c.usuarioId === usuarioId ? 'own' : ''}">
+                    <div class="comment-header">
+                        <strong>${escapeHtml(c.usuarioNombre)} (${escapeHtml(c.usuarioRol)})</strong>
+                        <span>${new Date(c.fecha).toLocaleString('es-ES')}</span>
+                    </div>
+                    <p>${escapeHtml(c.mensaje)}</p>
+                </div>
+            `).join('');
+
+            comentariosDiv.scrollTop = comentariosDiv.scrollHeight;
+        }
+
+        function iniciarAutoRefreshComentarios() {
+            if (comentariosInterval) {
+                clearInterval(comentariosInterval);
+            }
+
+            comentariosInterval = setInterval(() => {
+                if (ticketActual && !document.hidden) {
+                    cargarComentarios();
+                }
+            }, 3000);
+        }
+
+        function iniciarAutoRefreshTickets() {
+            if (ticketsRefreshInterval) {
+                clearInterval (ticketsRefreshInterval);
+            }
+
+            ticketsRefreshInterval = setInterval (() => {
+                if (!document.hidden) {
+                    cargarTickets();
+                }
+            }, AUTO_REFRESH_MS);
+        }
+
+        async function actualizarEstado() {
+            if (!ticketActual) return;
+            const estado = document.getElementById('cambiarEstado').value;
+            if (!estado) {
+                alert('Selecciona un estado');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/Tickets/${ticketActual.id}/estado`, {
+                    method: 'PUT',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ estado: estado })
+                });
+
+                if (response.ok) {
+                    alert('Estado actualizado');
+                    notifyDataChanged('ticket-status-updated', ticketActual.id);
+                    cerrarModal();
+                    cargarTickets();
+                } else {
+                    const data = await response.json();
+                    alert(data.message || 'Error al actualizar');
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            }
+        }
+
+        async function asignarTicketAdmin() {
+            if (!ticketActual || !esAdmin()) return;
+
+            const tecnicoId = document.getElementById('selectorTecnico').value;
+            if (!tecnicoId) {
+                alert('Selecciona un técnico');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/Tickets/${ticketActual.id}/asignar`, {
+                    method: 'PUT',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ tecnicoId: parseInt(tecnicoId, 10) })
+                });
+
+                if (response.ok) {
+                    alert('Ticket asignado correctamente');
+                    notifyDataChanged('ticket-assigned', ticketActual.id);
+                    cerrarModal();
+                    cargarTickets();
+                } else {
+                    const data = await response.json();
+                    alert(data.message || 'Error al asignar');
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            }
+        }
+
+        async function enviarComentario() {
+            if (!ticketActual) return;
+            const mensaje = document.getElementById('nuevoComentario').value.trim();
+            const boton = document.getElementById('btnEnviarComentario');
+            if (!mensaje) {
+                alert('Escribe un comentario');
+                return;
+            }
+
+            try {
+                boton.disabled = true;
+                const response = await fetch(`${API_BASE_URL}/api/Comentarios`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({
+                        ticketId: ticketActual.id,
+                        mensaje: mensaje
+                    })
+                });
+
+                if (response.ok) {
+                    document.getElementById('nuevoComentario').value = '';
+                    await cargarComentarios();
+                    notifyDataChanged('comment', ticketActual.id);
+                } else {
+                    const data = await response.json();
+                    alert(data.message || 'Error al enviar comentario');
+                }
+            } catch (error) {
+                alert('Error de conexión');
+            } finally {
+                boton.disabled = false;
+            }
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('ticketModal');
+            if (event.target === modal) {
+                cerrarModal();
+            }
+        }
+
+        window.addEventListener('beforeunload', () => {
+            if (comentariosInterval) {
+                clearInterval(comentariosInterval);
+            }
+            if (ticketsRefreshInterval) {
+                clearInterval(ticketsRefreshInterval);
+            }
+        });
+
+        window.addEventListener('storage', event => {
+    if (event.key !== REFRESH_EVENT_KEY || !event.newValue) {
+        return;
+    }
+
+    try {
+        const payload = JSON.parse(event.newValue);
+
+        if (payload.scope === 'comment' && ticketActual && payload.ticketId === ticketActual.id) {
+            cargarComentarios();
+            return;
+        }
+
+        cargarTickets();
+    } catch (error) {
+        console.error('Error procesando actualización:', error);
+    }
+});
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                cargarTickets();
+                if (ticketActual) {
+                    verDetalle(ticketActual.id);
+                }
+            }
+        });
+
+        window.onload = async function() {
+            await cargarTecnicosDisponibles();
+            await cargarTickets();
+            iniciarAutoRefreshTickets();
+        };
+    </script>
+</body>
+</html>

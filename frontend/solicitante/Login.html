@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Path Support</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .left {
+            flex: 1;
+            background: linear-gradient(135deg, #2563eb, #1e3a8a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .right {
+            flex: 1;
+            background: url("../Help.png") center/cover no-repeat;
+            display: block;
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        form {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .logo h1 {
+            color: #1e3a8a;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #1f2937;
+            margin-bottom: 25px;
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .token-options {
+            margin-bottom: 20px;
+        }
+
+        .token-options label {
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .token-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .token-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .token-btn:hover {
+            border-color: #2563eb;
+        }
+
+        .token-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #2563eb, #1e3a8a);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .register-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* Responsive */
+        @media (min-width: 1024px) {
+            .right {
+                display: block;
+            }
+        }
+
+        @media (max-width: 480px) {
+            form {
+                padding: 30px 20px;
+            }
+
+            .token-buttons {
+                flex-direction: column;
+            }
+
+            input {
+                font-size: 16px; /* Previene zoom en iOS */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <div class="form-wrapper">
+                <form id="loginForm">
+                    <div class="logo">
+                        <h1>Path Support</h1>
+                        <p>Mesa de Ayuda</p>
+                    </div>
+
+                    <h2>Iniciar Sesión</h2>
+
+                    <div id="errorMessage" class="error-message"></div>
+
+                    <div class="form-group">
+                        <label for="correo">Correo Electrónico</label>
+                        <input type="email" id="correo" placeholder="tu@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <input type="password" id="password" placeholder="Tu contraseña" required>
+                    </div>
+
+                    <div class="token-options">
+                        <label>Duración de la sesión:</label>
+                        <div class="token-buttons">
+                            <button type="button" class="token-btn" data-hours="1">1 hora</button>
+                            <button type="button" class="token-btn active" data-hours="2">2 horas</button>
+                            <button type="button" class="token-btn" data-hours="4">4 horas</button>
+                        </div>
+                    </div>
+
+                    <button type="submit">Ingresar</button>
+
+                    <p class="register-link">
+                        ¿No tienes cuenta? <a href="#" onclick="window.location.href='register.html'">Regístrate</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+        <div class="right">
+            <img src="Help.png" alt="Soporte" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+    </div>
+
+   <!-- 1. Primero la configuración global -->
+<script src="../js/config.js"></script> 
+
+<!-- 2. Segundo las funciones base (que leen window.API_BASE_URL) -->
+<script src="../js/funcionBase.js"></script> 
+
+<script>API_BASE_URL = window.API_BASE_URL; 
+let selectedTokenExpiration = 2;
+
+    // ======================================================
+    // VALIDAR SESIÓN REAL DESDE BACKEND
+    // ======================================================
+    async function obtenerSesionActual(token) {
+        const response = await fetch(`${API_BASE_URL}/api/Auth/me`, {
+            method: "GET",
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('No se pudo validar la sesión');
+        }
+
+        return await response.json();
+    }
+
+
+    // ======================================================
+    // BOTONES DE DURACIÓN DE TOKEN
+    // ======================================================
+    document.querySelectorAll('.token-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.token-btn')
+                .forEach(b => b.classList.remove('active'));
+
+            this.classList.add('active');
+
+            selectedTokenExpiration = parseInt(
+                this.dataset.hours || "2",
+                10
+            );
+        });
+    });
+
+    // ======================================================
+    // LOGIN PRINCIPAL
+    // ======================================================
+    document.getElementById("loginForm")
+        .addEventListener("submit", async function (e) {
+
+            e.preventDefault();
+
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+
+            const correo = document.getElementById("correo")
+                .value
+                .trim()
+                .toLowerCase();
+
+            const password = document.getElementById("password")
+                .value
+                .trim();
+
+            try {
+                // ======================================================
+                // LIMPIAR SESIÓN PREVIA COMPLETAMENTE
+                // ======================================================
+                localStorage.clear();
+                sessionStorage.clear();
+
+                // ======================================================
+                // LOGIN INICIAL
+                // ======================================================
+                const response = await fetch(`${API_BASE_URL}/api/Auth/login`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        correo: correo,
+                        password: password,
+                        tokenExpiration: selectedTokenExpiration
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        data.message || "Credenciales incorrectas"
+                    );
+                }
+
+                if (!data.token) {
+                    throw new Error("No se recibió token válido");
+                }
+
+                // ======================================================
+                // GUARDAR TOKEN TEMPORALMENTE
+                // ======================================================
+                localStorage.setItem("token", data.token);
+                sessionStorage.setItem("token", data.token);
+
+                localStorage.setItem("tokenExpiration", data.expiration);
+                sessionStorage.setItem("tokenExpiration", data.expiration);
+
+                // ======================================================
+                // VALIDAR IDENTIDAD REAL
+                // ======================================================
+                const usuario = await obtenerSesionActual(data.token);
+
+                if (!usuario || !usuario.id || !usuario.rol) {
+                    throw new Error("Datos de sesión inválidos");
+                }
+
+                // ======================================================
+                // GUARDAR IDENTIDAD COMPLETA
+                // ======================================================
+                localStorage.setItem("usuarioId", usuario.id);
+                localStorage.setItem("rol", usuario.rol);
+                localStorage.setItem("nombre", usuario.nombre || "");
+                localStorage.setItem("correo", usuario.correo || "");
+
+                sessionStorage.setItem("usuarioId", usuario.id);
+                sessionStorage.setItem("rol", usuario.rol);
+                sessionStorage.setItem("nombre", usuario.nombre || "");
+                sessionStorage.setItem("correo", usuario.correo || "");
+
+                // ======================================================
+                // SOLUCIÓN AL F5: Reiniciar bandera e invocar con el rol correcto
+                // ======================================================
+                window.redireccionEnProceso = false; 
+                console.log("Sesión validada e iniciada de manera inmediata para:", usuario.rol);
+                
+                // Pasamos 'usuario.rol' que sí tiene el dato real en vez de 'data.rol'
+                redirectByRole(usuario.rol);
+
+            } catch (error) {
+
+                console.error("Error de login:", error);
+
+                // ======================================================
+                // LIMPIEZA TOTAL SI FALLA
+                // ======================================================
+                localStorage.clear();
+                sessionStorage.clear();
+
+                errorDiv.textContent =
+                    error.message || "Error al iniciar sesión";
+
+                errorDiv.style.display = 'block';
+            }
+        });
+</script>
+</body>
+</html> 

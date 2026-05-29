@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: helpdesk_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    networks:
+      - helpdesk_lan
+
+  api:
+    build: .
+    container_name: helpdesk_api
+    restart: always
+    environment:
+      ASPNETCORE_URLS: http://0.0.0.0:8080
+      ASPNETCORE_ENVIRONMENT: Production
+      # Inyecta la cadena de conexión usando las variables del .env
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+      
+      # Inyecta la firma JWT secreta
+      Jwt__Key: ${JWT_KEY}
+      
+      # Inyecta las contraseñas para los Seeds del appsettings.json
+      AdminSeed__Password: ${ADMIN_PASSWORD}
+      TecnicoSeed__Password: ${TECNICO_PASSWORD}
+      UsuarioSeed__Password: ${USUARIO_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - helpdesk_lan
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: helpdesk_frontend
+    restart: always
+    ports:
+      - "8081:80"
+    depends_on:
+      - api
+    networks:
+      - helpdesk_lan
+
+networks:
+  helpdesk_lan:
+    driver: bridge

@@ -1,0 +1,13 @@
+# --- .NET ---
+[Bb]in/
+[Oo]bj/
+*.lscache
+*.user
+*.suo
+
+# --- IDEs y Editores ---
+.vs/
+.vscode/
+
+# --- Docker ---
+.env

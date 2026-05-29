@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Ticket - Path Support</title>
+    <link rel="stylesheet" href="css/baseestilo.css">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(120deg, #5d7fa1, #1e40af);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .header-box {
+            background: white;
+            padding: 20px 40px;
+            border-radius: 16px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .header-box h1 {
+            color: #1e3a8a;
+            font-size: 26px;
+            margin: 0;
+        }
+
+        .form-container {
+            background: white;
+            padding: 35px;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            color: #1e3a8a;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #2563eb, #1e3a8a);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-back {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn-back:hover {
+            color: #1e3a8a;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message {
+            background: #dcfce7;
+            color: #166534;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-container {
+                padding: 25px 20px;
+            }
+
+            .header-box {
+                padding: 15px 25px;
+            }
+
+            .header-box h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        if (!localStorage.getItem("usuarioId")) {
+            window.location.href = "Login.html";
+        }
+    </script>
+
+    <div class="header-box">
+        <h1>Path Support</h1>
+    </div>
+
+    <div class="form-container">
+        <h2>Crear Nuevo Ticket</h2>
+
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+
+        <form id="ticketForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="correo">Correo</label>
+                    <input type="email" id="correo" readonly>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="titulo">Resumen del Caso *</label>
+                <input type="text" id="titulo" placeholder="Describe brevemente tu problema" required minlength="5" maxlength="200">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="prioridad">Prioridad</label>
+                    <select id="prioridad">
+                        <option value="Baja">Baja</option>
+                        <option value="Media" selected>Media</option>
+                        <option value="Alta">Alta</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="categoria">Categoría</label>
+                    <select id="categoria">
+                        <option value="">Seleccionar...</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Descripción Detallada *</label>
+                <textarea id="descripcion" placeholder="Explica con detalle tu problema o solicitud..." required minlength="10" maxlength="2000"></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">Crear Ticket</button>
+            <a href="inicio.html" class="btn-back">← Volver al inicio</a>
+        </form>
+    </div>
+
+    <script src="../js/config.js"></script>
+<script src="../js/funcionBase.js"></script>
+<script>
+        API_BASE_URL = window.API_BASE_URL;  // viene de ../js/config.js
+        const REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
+
+        function notifyDataChanged(scope = 'tickets', ticketId = null) {
+            localStorage.setItem(REFRESH_EVENT_KEY, JSON.stringify({
+                scope,
+                ticketId,
+                timestamp: Date.now()
+            }));
+        }
+
+        async function sincronizarSesion() {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_BASE_URL}/api/Auth/me`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('No se pudo validar la sesión');
+            }
+
+            const usuario = await response.json();
+            localStorage.setItem('usuarioId', usuario.id);
+            localStorage.setItem('rol', usuario.rol);
+            localStorage.setItem('nombre', usuario.nombre);
+            localStorage.setItem('correo', usuario.correo);
+            document.getElementById('nombre').value = usuario.nombre || '';
+            document.getElementById('correo').value = usuario.correo || '';
+        }
+
+        // Cargar datos del usuario
+        document.getElementById('nombre').value = localStorage.getItem('nombre') || '';
+        document.getElementById('correo').value = localStorage.getItem('correo') || '';
+
+        // Cargar categorías
+        async function cargarCategorias() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/Categorias`);
+                const categorias = await response.json();
+                const select = document.getElementById('categoria');
+                
+                categorias.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.id;
+                    option.textContent = cat.nombre;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error cargando categorías:', error);
+            }
+        }
+
+        document.getElementById('ticketForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            const usuarioId = localStorage.getItem("usuarioId");
+            const token = localStorage.getItem("token");
+
+            if (!usuarioId) {
+                errorDiv.textContent = "Usuario no identificado. Por favor, inicia sesión.";
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            const titulo = document.getElementById('titulo').value.trim();
+            const descripcion = document.getElementById('descripcion').value.trim();
+            const prioridad = document.getElementById('prioridad').value;
+            const categoriaId = document.getElementById('categoria').value;
+
+            const ticket = {
+    titulo: titulo,
+    descripcion: descripcion,
+    prioridad: prioridad,
+    categoriaId: categoriaId ? parseInt(categoriaId) : null
+};
+
+try {
+    const headers = {
+        "Content-Type": "application/json"
+    };
+    
+    // El token es vital para que el backend extraiga el UsuarioId de los Claims
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/Tickets`, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(ticket)
+    });
+
+    // Leemos la respuesta como texto primero para evitar que truene si viene vacía
+    const textResponse = await response.text();
+    let data = {};
+    if (textResponse) {
+        data = JSON.parse(textResponse);
+    }
+
+    if (!response.ok) {
+        // Si el backend validó algo mal (título muy corto, etc.), atrapamos el mensaje
+        throw new Error(data.message || `Error del servidor (Código ${response.status})`);
+    }
+
+    // Si todo salió bien
+    notifyDataChanged('ticket-created', data.id || null);
+    successDiv.textContent = "¡Ticket creado correctamente! Redirigiendo...";
+    successDiv.style.display = 'block';
+
+    setTimeout(() => {
+        window.location.href = "inicio.html";
+    }, 1500);
+
+} catch (error) {
+    console.error("Error al enviar el formulario:", error);
+    errorDiv.textContent = error.message;
+    errorDiv.style.display = 'block';
+}
+        });
+
+        window.onload = async function() {
+            try {
+                await sincronizarSesion();
+                await cargarCategorias();
+            } catch (error) {
+                window.location.href = 'Login.html';
+            }
+        };
+    </script>
+</body>
+</html>

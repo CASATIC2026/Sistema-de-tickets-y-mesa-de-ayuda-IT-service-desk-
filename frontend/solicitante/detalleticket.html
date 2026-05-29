@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Ticket - Path Support</title>
+    <link rel="stylesheet" href="css/baseestilo.css">
+    <style>
+        body {
+            min-height: 100vh;
+            background: #f4f6f9;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: -30px auto 40px;
+            padding: 0 20px;
+        }
+
+        .ticket-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .ticket-header {
+            background: linear-gradient(135deg, #2563eb, #1e3a8a);
+            color: white;
+            padding: 20px;
+        }
+
+        .ticket-header h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .ticket-id {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .ticket-body {
+            padding: 25px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .info-item span {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 15px;
+        }
+
+        .description-section {
+            margin-bottom: 25px;
+        }
+
+        .description-section h3,
+        .comments-section h3 {
+            color: #374151;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .description-section p {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            color: #4b5563;
+            line-height: 1.7;
+        }
+
+        .comments-section {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 25px;
+        }
+
+        .section-copy {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        .chat-shell {
+            background: linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
+            border-radius: 12px;
+            border: 1px solid #dbeafe;
+            overflow: hidden;
+        }
+
+        .chat-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.84);
+            border-bottom: 1px solid #dbeafe;
+            color: #4b5563;
+            font-size: 13px;
+        }
+
+        .chat-messages {
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 18px 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .comment {
+            max-width: 82%;
+            padding: 15px;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
+            align-self: flex-start;
+        }
+
+        .comment.own {
+            align-self: flex-end;
+            background: #2563eb;
+        }
+
+        .comment.tecnico:not(.own) {
+            border: 1px solid #bbf7d0;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .comment-header strong {
+            color: #1e3a8a;
+        }
+
+        .comment-header span {
+            color: #6b7280;
+        }
+
+        .comment p {
+            color: #4b5563;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .comment.own .comment-header strong,
+        .comment.own .comment-header span,
+        .comment.own p {
+            color: white;
+        }
+
+        .comment-form {
+            margin-top: 16px;
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            min-height: 90px;
+            resize: vertical;
+            font-size: 14px;
+        }
+
+        .comment-form textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .comment-form button {
+            margin-top: 10px;
+            padding: 12px 25px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .comment-form button:hover {
+            background: #1d4ed8;
+        }
+
+        .comment-form button:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: #6b7280;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-back:hover {
+            background: #4b5563;
+        }
+
+        .empty-comments {
+            text-align: center;
+            color: #6b7280;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .container {
+                margin-top: -20px;
+            }
+
+            .ticket-body {
+                padding: 20px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .chat-status,
+            .comment-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .comment {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        if (!localStorage.getItem("usuarioId")) {
+            window.location.href = "Login.html";
+        }
+    </script>
+
+    <div class="header">
+        <h1>Detalle del Ticket</h1>
+        <p>Seguimiento de tu solicitud</p>
+    </div>
+
+    <div class="container">
+        <div class="ticket-card">
+            <div class="ticket-header">
+                <h2 id="ticketTitulo">Cargando...</h2>
+                <span class="ticket-id">Ticket #<span id="ticketId"></span></span>
+            </div>
+
+            <div class="ticket-body">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Estado</label>
+                        <span id="ticketEstado">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Prioridad</label>
+                        <span id="ticketPrioridad">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>SLA</label>
+                        <span id="ticketSla">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Fecha de Creación</label>
+                        <span id="ticketFecha">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Técnico Asignado</label>
+                        <span id="ticketTecnico">-</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Categoría</label>
+                        <span id="ticketCategoria">-</span>
+                    </div>
+                </div>
+
+                <div class="description-section">
+                    <h3>Descripción</h3>
+                    <p id="ticketDescripcion">-</p>
+                </div>
+
+                <div class="comments-section">
+                    <h3>Chat del Ticket</h3>
+                    <p class="section-copy">Usa este espacio para conversar con el técnico asignado y dar seguimiento a la solución.</p>
+                    <div class="chat-shell">
+                        <div class="chat-status">
+                            <span id="chatStatus">Cargando conversación...</span>
+                            <span id="chatUpdatedAt">-</span>
+                        </div>
+                        <div id="comentariosList" class="chat-messages">
+                            <p class="empty-comments">Cargando comentarios...</p>
+                        </div>
+                    </div>
+
+                    <div class="comment-form">
+                        <textarea id="nuevoComentario" placeholder="Escribe un mensaje para el técnico..."></textarea>
+                        <button id="btnEnviarComentario" onclick="enviarComentario()">Enviar Mensaje</button>
+                    </div>
+                </div>
+
+                <a href="inicio.html" class="btn-back">Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/funcionBase.js"></script>
+    <script>
+       // Reutilizamos la variable global de configuración
+API_BASE_URL = window.API_BASE_URL; 
+
+// Obtener el ID del ticket desde la URL
+const urlParams = new URLSearchParams(window.location.search);
+const ticketId = urlParams.get('id');
+
+// Variable global para controlar el intervalo de actualización automática
+let chatInterval = null;
+
+// ======================================================
+// SINCRONIZAR SESIÓN (PROMETIDA)
+// ======================================================
+async function sincronizarSesion() {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) return false; // No hay token, no podemos sincronizar
+
+        const response = await fetch(`${API_BASE_URL}/api/Auth/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+            const usuario = await response.json();
+            localStorage.setItem('usuarioId', usuario.id);
+            localStorage.setItem('rol', usuario.role || usuario.rol);
+            localStorage.setItem('nombre', usuario.nombre);
+            localStorage.setItem('correo', usuario.correo);
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('Error en sincronizarSesion:', error);
+        return false;
+    }
+}
+
+// ======================================================
+// CARGAR LOS DATOS DEL TICKET GENERAL
+// ======================================================
+async function cargarDetalleTicket() {
+    if (!ticketId) {
+        alert("No se especificó ningún ID de ticket.");
+        window.location.href = "inicio.html";
+        return;
+    }
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+        // SEGURIDAD: Si no hay token (porque cerraron sesión), detenemos todo y redirigimos
+        detenerTiempoReal();
+        window.location.href = "login.html";
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/Tickets/${ticketId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        // Si el servidor devuelve 401 (No autorizado) o 403 (Prohibido) porque expiró la sesión
+        if (response.status === 401 || response.status === 403) {
+            detenerTiempoReal();
+            window.location.href = "login.html";
+            return;
+        }
+
+        if (!response.ok) throw new Error("No se pudo obtener la información del ticket.");
+
+        const ticket = await response.json();
+
+        // Inyectar datos generales en el HTML con validación de existencia
+        if(document.getElementById('ticketId')) document.getElementById('ticketId').textContent = ticket.id;
+        if(document.getElementById('ticketTitulo')) document.getElementById('ticketTitulo').textContent = ticket.titulo;
+        if(document.getElementById('ticketEstado')) document.getElementById('ticketEstado').textContent = ticket.estado || 'Abierto';
+        if(document.getElementById('ticketPrioridad')) document.getElementById('ticketPrioridad').textContent = ticket.prioridad || 'Baja';
+        if(document.getElementById('ticketSla')) document.getElementById('ticketSla').textContent = ticket.slaStatus || 'N/A';
+        if(document.getElementById('ticketFecha')) document.getElementById('ticketFecha').textContent = ticket.fechaCreacion ? new Date(ticket.fechaCreacion).toLocaleDateString() : '-';
+        if(document.getElementById('ticketTecnico')) document.getElementById('ticketTecnico').textContent = ticket.tecnicoNombre || 'Sin asignar';
+        if(document.getElementById('ticketCategoria')) document.getElementById('ticketCategoria').textContent = ticket.categoriaNombre || 'General';
+        if(document.getElementById('ticketDescripcion')) document.getElementById('ticketDescripcion').textContent = ticket.descripcion;
+
+        // Renderizar el Chat
+        renderizarChat(ticket.comentarios || []);
+
+    } catch (error) {
+        console.error("Error al cargar el detalle:", error);
+        const statusChat = document.getElementById('chatStatus');
+        if(statusChat) statusChat.textContent = "Error al cargar la conversación.";
+    }
+}
+
+// ======================================================
+// ACTUALIZAR ÚNICAMENTE EL CHAT (Tiempo Real Seguro)
+// ======================================================
+async function actualizarSoloChat() {
+    if (!ticketId) return;
+    const token = localStorage.getItem('token');
+    
+    // Si se cerró la sesión en otra pestaña, detenemos el bucle para evitar errores 401 masivos
+    if (!token) {
+        detenerTiempoReal();
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/Comentarios/ticket/${ticketId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.status === 401) {
+            detenerTiempoReal();
+            return;
+        }
+
+        if (response.ok) {
+            const comentarios = await response.json();
+            renderizarChat(comentarios);
+        }
+    } catch (error) {
+        console.error("Error en la actualización automática del chat:", error);
+    }
+}
+
+// ======================================================
+// DIBUJAR LOS MENSAJES (MÁXIMA SEGURIDAD DE ROLES)
+// ======================================================
+function renderizarChat(comentarios) {
+    const contenedor = document.getElementById('comentariosList');
+    const statusChat = document.getElementById('chatStatus');
+    
+    // Leemos los datos actuales de la sesión de manera segura
+    const usuarioIdActual = localStorage.getItem('usuarioId') ? Number(localStorage.getItem('usuarioId')) : null;
+    const miRolActual = localStorage.getItem('rol'); 
+
+    if (!contenedor) return;
+
+    const estabaAbajo = contenedor.scrollHeight - contenedor.scrollTop <= contenedor.clientHeight + 60;
+    contenedor.innerHTML = '';
+
+    if (!comentarios || comentarios.length === 0) {
+        contenedor.innerHTML = `<p class="empty-comments">No hay mensajes en este ticket aún.</p>`;
+        if(statusChat) statusChat.textContent = "Conversación vacía";
+        return;
+    }
+
+    if(statusChat) statusChat.textContent = `${comentarios.length} mensaje(s)`;
+    
+    comentarios.forEach(com => {
+        const div = document.createElement('div');
+        div.classList.add('comment');
+
+        const idDuenoMensaje = Number(com.usuarioId);
+
+        // REGLA TRIPLE DE ASIGNACIÓN DE LADO:
+        // 1. Si el ID del dueño del mensaje coincide con mi ID actual de sesión => DERECHA
+        if (usuarioIdActual && idDuenoMensaje === usuarioIdActual) {
+            div.classList.add('own');
+        } 
+        // 2. Si yo soy Admin/Técnico y el mensaje lo escribió otro Admin/Técnico => DERECHA (Equipo de soporte agrupado)
+        else if ((miRolActual === 'Admin' || miRolActual === 'Tecnico') && (com.usuarioRol === 'Admin' || com.usuarioRol === 'Tecnico')) {
+            div.classList.add('own');
+        }
+        // 3. En cualquier otro caso => IZQUIERDA (El bando contrario)
+        else {
+            if (com.usuarioRol === 'Admin' || com.usuarioRol === 'Tecnico') {
+                div.classList.add('tecnico'); // Estilo izquierdo para técnico
+            } else {
+                div.classList.add('solicitante'); // Estilo izquierdo para cliente
+            }
+        }
+
+        const fechaStr = com.fecha ? new Date(com.fecha).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+        const tagRol = com.usuarioRol ? ` (${com.usuarioRol})` : '';
+
+        div.innerHTML = `
+            <div class="comment-header">
+                <strong>${com.usuarioNombre || 'Usuario'}<small style="opacity: 0.75; font-weight: normal;">${tagRol}</small></strong>
+                <span>${fechaStr}</span>
+            </div>
+            <p>${com.mensaje}</p>
+        `;
+        contenedor.appendChild(div);
+    });
+
+    if (estabaAbajo) {
+        contenedor.scrollTop = contenedor.scrollHeight;
+    }
+}
+
+// ======================================================
+// ENVIAR UN NUEVO MENSAJE AL CHAT
+// ======================================================
+async function enviarComentario() {
+    const inputMensaje = document.getElementById("nuevoComentario"); 
+    const mensajeTexto = inputMensaje.value.trim();
+
+    if (!mensajeTexto) return;
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert("Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    const payload = {
+        ticketId: parseInt(ticketId),
+        mensaje: mensajeTexto
+    };
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/Comentarios`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error('Error al enviar el mensaje.');
+
+        inputMensaje.value = "";
+        await actualizarSoloChat(); 
+
+        const contenedor = document.getElementById('comentariosList');
+        if(contenedor) contenedor.scrollTop = contenedor.scrollHeight;
+
+    } catch (error) {
+        console.error(error);
+        alert("Error: " + error.message);
+    }
+}
+
+function detenerTiempoReal() {
+    if (chatInterval) {
+        clearInterval(chatInterval);
+        chatInterval = null;
+    }
+}
+
+// ======================================================
+// INICIALIZACIÓN SECUENCIAL (Aquí está el truco de la estabilidad)
+// ======================================================
+window.onload = async function() {
+    // 1. Primero esperamos obligatoriamente a que la sesión esté sincronizada en LocalStorage
+    await sincronizarSesion();
+    
+    // 2. Una vez que ya sabemos con certeza quiénes somos, cargamos el ticket
+    await cargarDetalleTicket();
+    
+    // 3. Activamos el tiempo real de manera limpia
+    detenerTiempoReal();
+    chatInterval = setInterval(actualizarSoloChat, 3000);
+};
+
+window.onbeforeunload = function() {
+    detenerTiempoReal();
+};
+    </script>
+</body>
+</html>
