@@ -293,12 +293,14 @@
             <div class="video-section">
                 <h2>🎥 Video Tutorial</h2>
                 <div class="video-wrapper">
-                    <iframe 
-                        src="https://www.youtube.com/embed/DsvJ7iv_d7Y?si=AbG-R45CXiNEvfFD" 
-                        title="Video tutorial" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
-                    </iframe>
+                    <video controls 
+                    preload="metadata" 
+                    playsinline 
+                    webkit-playsinline
+                    style="width: 100%; height: auto; border-radius: 12px; display: block; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+                    
+                        <source src="Sistematickets.mp4" type="video/mp4">
+                    </video>
                 </div>
             </div>
 
