@@ -153,14 +153,28 @@ namespace HelpDeskAPI.Data
                 Usuarios.Add(usuario);
                 await SaveChangesAsync();
             }
-            else if (!existing.UsuarioRoles.Any(ur => ur.RolId == rol.Id))
+            else
             {
-                existing.UsuarioRoles.Add(new UsuarioRol
+                var updated = false;
+
+                if (!existing.UsuarioRoles.Any(ur => ur.RolId == rol.Id))
                 {
-                    UsuarioId = existing.Id,
-                    RolId = rol.Id
-                });
-                await SaveChangesAsync();
+                    existing.UsuarioRoles.Add(new UsuarioRol
+                    {
+                        UsuarioId = existing.Id,
+                        RolId = rol.Id
+                    });
+                    updated = true;
+                }
+
+                if (!passwordService.VerifyPassword(password, existing.Password))
+                {
+                    existing.Password = passwordService.HashPassword(password);
+                    updated = true;
+                }
+
+                if (updated)
+                    await SaveChangesAsync();
             }
         }
     }
