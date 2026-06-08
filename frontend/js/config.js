@@ -11,13 +11,14 @@
  */
 (function () {
     const host = window.location.hostname;
+    const railwayApiUrl = 'https://helpdeskapi-production-ad7f.up.railway.app';
 
     const apiPort = window.API_PORT || '8080';
     let apiBaseUrl = `http://${host}:${apiPort}`;
 
     // Permite definir overrides por hostname (ej. dominios de prod / staging)
-    // Permite definir overrides por hostname (ej. dominios de prod / staging)
     const overrides = {
+        'sistema-de-tickets-y-mesa-de-ayuda.vercel.app': railwayApiUrl,
         '192.168.204.82': 'http://192.168.204.82:8080',
         'localhost': 'http://192.168.204.82:8080'
     };
