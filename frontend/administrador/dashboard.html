@@ -253,27 +253,27 @@
 </head>
 <body>
     <script src="../js/config.js"></script>
-<script src="../js/funcionBase.js"></script>
+    <script src="../js/funcionBase.js"></script>
 
-<script>
-    // Usamos las funciones robustas de funcionBase.js
-    const token = getToken();
-    const rol = getUserRole().trim(); // Eliminamos espacios fantasmas
+    <script>
+        // Verificación segura utilizando funcionBase.js cargada previamente
+        const token = getToken();
+        // Si no existe la función getUserRole en tu script base, usamos localStorage directamente de forma segura
+        const rol = (typeof getUserRole === 'function') ? getUserRole().trim() : (localStorage.getItem('rol') || '').trim();
 
-    if (!token) {
-        window.location.replace('../solicitante/Login.html');
-    } 
-    else if (rol === 'Tecnico') {
-        window.location.replace('tecnico.html');
-    } 
-    else if (rol === 'Admin') {
-        console.log("Acceso concedido a Administrador");
-    } 
-    else {
-        // Si es Solicitante o cualquier otra cosa, se va a su inicio
-        window.location.replace('../solicitante/inicio.html');
-    }
-</script>
+        if (!token) {
+            window.location.replace('../solicitante/Login.html');
+        } 
+        else if (rol === 'Tecnico') {
+            window.location.replace('tecnico.html');
+        } 
+        else if (rol === 'Admin') {
+            console.log("Acceso concedido a Administrador");
+        } 
+        else {
+            window.location.replace('../solicitante/inicio.html');
+        }
+    </script>
 
     <header>
         <div>
@@ -284,12 +284,11 @@
             <a href="dashboard.html" class="active">Dashboard</a>
             <a href="admin-tickets.html">Tickets</a>
             <a href="#" id="adminUsersLink" style="display:none;">Usuarios</a>
-            <a href="#" onclick="logout()">Cerrar sesión</a>
+            <a href="#" id="logoutBtn">Cerrar Sesión</a>
         </nav>
     </header>
 
     <div class="container">
-  
         <div class="stats-grid">
             <div class="stat-card blue">
                 <div class="icon">🎫</div>
@@ -319,7 +318,6 @@
         </div>
 
         <div class="dashboard-grid">
-
             <section>
                 <h2>📝 Tickets Recientes</h2>
                 <div class="content" id="recentTickets">
@@ -327,32 +325,6 @@
                 </div>
             </section>
 
-            <!-- Quick Actions -->
-            <section>
-                <h2>⚡ Acciones Rápidas</h2>
-                <div class="content">
-                    <div class="quick-actions">
-                        <a href="admin-tickets.html" class="action-btn">
-                            <span class="icon">📝</span>
-                            <span>Ver Tickets</span>
-                        </a>
-                        <a href="../solicitante/crearticket.html" class="action-btn">
-                            <span class="icon">➕</span>
-                            <span>Crear Ticket</span>
-                        </a>
-                        <a href="../solicitante/index.html" class="action-btn">
-                            <span class="icon">📚</span>
-                            <span>Base de Conocimientos</span>
-                        </a>
-                        <a href="#" class="action-btn" onclick="exportarReporte()">
-                            <span class="icon">📊</span>
-                            <span>Exportar Reporte</span>
-                        </a>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Priority Distribution -->
             <section>
                 <h2>📊 Distribución por Prioridad</h2>
                 <div class="content">
@@ -375,7 +347,6 @@
                 </div>
             </section>
 
-            <!-- SLA Overview -->
             <section>
                 <h2>⏰ Estado de SLA</h2>
                 <div class="content">
@@ -408,24 +379,18 @@
         Mesa de Ayuda © 2026 - Path Support
     </footer>
 
-    <script src="../js/config.js"></script>
-<script src="../js/funcionBase.js"></script>
-<script>
-        API_BASE_URL = window.API_BASE_URL;  // viene de ../js/config.js
+    <script>
+        // Las variables base se configuran al cargar completamente el DOM
+        let API_BASE_URL = window.API_BASE_URL || ""; 
         const REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
         const AUTO_REFRESH_MS = 5000;
         let dashboardRefreshInterval = null;
 
         document.getElementById('nombreUsuario').textContent = localStorage.getItem('nombre') || '';
 
-
         if (localStorage.getItem('rol') === 'Admin') {
-            document.getElementById('adminUsersLink').style.display = 'inline';
-        }
-
-        function logout() {
-            localStorage.clear();
-            window.location.href = '../solicitante/Login.html';
+            const adminLink = document.getElementById('adminUsersLink');
+            if(adminLink) adminLink.style.display = 'inline';
         }
 
         function getAuthHeaders() {
@@ -453,6 +418,7 @@
         }
 
         async function cargarEstadisticas() {
+            if (!API_BASE_URL) return;
             try {
                 const response = await fetch(`${API_BASE_URL}/api/Tickets/estadisticas`, {
                     headers: getAuthHeaders()
@@ -476,6 +442,7 @@
         }
 
         async function cargarTicketsRecientes() {
+            if (!API_BASE_URL) return;
             try {
                 const response = await fetch(`${API_BASE_URL}/api/Tickets`, {
                     headers: getAuthHeaders()
@@ -487,7 +454,6 @@
 
                 const tickets = await response.json();
 
-                // Calcular SLA stats
                 const enTiempo = tickets.filter(t => t.slaStatus === 'En tiempo' || t.slaStatus === 'Cumplido').length;
                 const porVencer = tickets.filter(t => t.slaStatus === 'Por vencer').length;
                 document.getElementById('slaEnTiempo').textContent = enTiempo;
@@ -522,10 +488,6 @@
             }
         }
 
-        function exportarReporte() {
-            alert('Funcionalidad de exportación en desarrollo');
-        }
-
         window.addEventListener('storage', event => {
             if (event.key === REFRESH_EVENT_KEY && event.newValue) {
                 refrescarDashboard();
@@ -535,12 +497,6 @@
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
                 refrescarDashboard();
-            }
-        });
-
-        window.addEventListener('beforeunload', () => {
-            if (dashboardRefreshInterval) {
-                clearInterval(dashboardRefreshInterval);
             }
         });
 

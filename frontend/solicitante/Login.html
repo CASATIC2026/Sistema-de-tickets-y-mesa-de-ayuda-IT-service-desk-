@@ -32,11 +32,7 @@
             padding: 20px;
         }
 
-        .right {
-            flex: 1;
-            background: url("../Help.png") center/cover no-repeat;
-            display: block;
-        }
+        /* CAMBIO: Se eliminó el bloque .right que cargaba la imagen Help.png */
 
         .form-wrapper {
             width: 100%;
@@ -182,12 +178,6 @@
         }
 
         /* Responsive */
-        @media (min-width: 1024px) {
-            .right {
-                display: block;
-            }
-        }
-
         @media (max-width: 480px) {
             form {
                 padding: 30px 20px;
@@ -244,15 +234,10 @@
                 </form>
             </div>
         </div>
-        <div class="right">
-            <img src="Help.png" alt="Soporte" style="width: 100%; height: 100%; object-fit: cover;">
-        </div>
     </div>
 
-   <!-- 1. Primero la configuración global -->
-<script src="../js/config.js"></script> 
+    <script src="../js/config.js"></script> 
 
-<!-- 2. Segundo las funciones base (que leen window.API_BASE_URL) -->
 <script src="../js/funcionBase.js"></script> 
 
 <script>API_BASE_URL = window.API_BASE_URL; 
@@ -408,4 +393,4 @@ let selectedTokenExpiration = 2;
         });
 </script>
 </body>
-</html> 
+</html>
