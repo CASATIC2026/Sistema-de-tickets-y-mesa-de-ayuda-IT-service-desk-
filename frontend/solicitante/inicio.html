@@ -6,339 +6,71 @@
     <title>Path Support - Inicio</title>
     <link rel="stylesheet" href="css/baseestilo.css">
     <style>
-        /* Header con gradiente */
-        .header {
-            background: linear-gradient(135deg, #1e3a8a, #2563eb);
-            color: white;
-            text-align: center;
-            padding: 0 0 20px 0;
-        }
-
-        .top-bar {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 20px;
-            padding: 15px 30px;
-            border-bottom: 1px solid rgba(255,255,255,0.3);
-        }
-
-        /* Navbar */
-        .navbar {
-            background: linear-gradient(135deg, #1e3a8a, #2563eb);
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 25px;
-            /* CAMBIO 1: Línea divisoria superior mucho más delgada y sutil */
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        /* Nombre del sistema */
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            color: white;
-        }
-
-        /* Parte derecha */
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
-
-        /* Bienvenido usuario */
-        .welcome {
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            padding-right: 18px;
-            border-right: 1px solid rgba(255,255,255,0.4);
-        }
-
-        /* Links */
-        .nav-right a {
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .nav-right a:hover {
-            opacity: 0.8;
-        }
-
-        .header h1 {  
-            margin-top: 35px;
-            font-size: 42px;
-        }
-
-        .header p {
-            padding-bottom: 35px;
-        }
-
-        /* Menu de accesos rápidos */
-        .menu {
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .menu a {
-            color: white;
-            text-decoration: none;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .menu a:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        /* CTA Box */
-        .cta {
-            background: linear-gradient(135deg, #2563eb, #1e3a8a);
-            color: white;
-            padding: 30px;
-            border-radius: 16px;
-            text-align: center;
-            margin-bottom: 30px;
-            margin-top: 30px;
-        }
-
-        .cta h2 {
-            margin-bottom: 10px;
-            font-size: 22px;
-        }
-
-        .cta p {
-            opacity: 0.9;
-            margin-bottom: 20px;
-        }
-
-        .cta button {
-            background: white;
-            color: #1e3a8a;
-            border: none;
-            padding: 14px 35px;
-            font-size: 16px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .cta button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        /* Tickets Section */
-        .tickets-section {
-            background: linear-gradient(135deg, #2563eb, #1e3a8a);
-            padding: 25px;
-            border-radius: 18px;
-            color: white;
-            margin-bottom: 30px;
-        }
-
-        .tickets-section h2 {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .tickets-section table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            color: #1f2937;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .tickets-section th, .tickets-section td {
-            padding: 12px 15px;
-            text-align: left;
-        }
-
-        .tickets-section th {
-            background-color: #f3f4f6;
-            color: #374151;
-        }
-
-        /* Info Cards Modernizadas */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-top: 40px;
-            margin-bottom: 30px;
-        }
-
-        .info-card {
-            background: white;
-            padding: 30px 24px;
-            border-radius: 16px;
-            text-align: center;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .info-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            border-color: #2563eb;
-        }
-
-        .info-card-icon {
-            font-size: 28px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            transition: transform 0.3s ease;
-        }
-
-        .info-card:hover .info-card-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        .info-card h4 {
-            color: #1e3a8a;
-            margin-bottom: 10px;
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .info-card p {
-            color: #64748b;
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            flex-grow: 1;
-        }
-
-        .info-card-action {
-            font-size: 14px;
-            font-weight: 600;
-            color: #2563eb;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: color 0.2s;
-            margin-top: auto;
-        }
-
-        .info-card:hover .info-card-action {
-            color: #1e3a8a;
-        }
-
-        /* WhatsApp Float */
-        .whatsapp-float {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #25d366;
-            border-radius: 50px;
-            padding: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .whatsapp-float img {
-            width: 40px;
-            height: 40px;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #6b7280;
-            font-size: 14px;
-            border-top: 1px solid #e5e7eb;
-        }
-
-        /* Estilos de badges para la tabla */
+        .header { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; text-align: center; padding: 0 0 20px 0; }
+        .top-bar { display: flex; justify-content: flex-end; align-items: center; gap: 20px; padding: 15px 30px; border-bottom: 1px solid rgba(255,255,255,0.3); }
+        .navbar { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; display: flex; justify-content: space-between; align-items: center; padding: 18px 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.15); }
+        .logo { font-size: 24px; font-weight: 700; color: white; }
+        .nav-right { display: flex; align-items: center; gap: 18px; }
+        .welcome { color: white; font-size: 14px; font-weight: 600; padding-right: 18px; border-right: 1px solid rgba(255,255,255,0.4); }
+        .nav-right a { color: white; text-decoration: none; font-size: 14px; font-weight: 600; transition: 0.3s; }
+        .nav-right a:hover { opacity: 0.8; }
+        .header h1 { margin-top: 35px; font-size: 42px; }
+        .header p { padding-bottom: 35px; }
+        .cta { background: linear-gradient(135deg, #2563eb, #1e3a8a); color: white; padding: 30px; border-radius: 16px; text-align: center; margin-bottom: 30px; margin-top: 30px; }
+        .cta h2 { margin-bottom: 10px; font-size: 22px; }
+        .cta p { opacity: 0.9; margin-bottom: 20px; }
+        .cta button { background: white; color: #1e3a8a; border: none; padding: 14px 35px; font-size: 16px; border-radius: 25px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .cta button:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .tickets-section { background: linear-gradient(135deg, #2563eb, #1e3a8a); padding: 25px; border-radius: 18px; color: white; margin-bottom: 30px; }
+        .tickets-section h2 { margin-bottom: 20px; text-align: center; }
+        .tickets-section table { width: 100%; border-collapse: collapse; background: white; color: #1f2937; border-radius: 8px; overflow: hidden; }
+        .tickets-section th, .tickets-section td { padding: 12px 15px; text-align: left; }
+        .tickets-section th { background-color: #f3f4f6; color: #374151; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 40px; margin-bottom: 30px; }
+        .info-card { background: white; padding: 30px 24px; border-radius: 16px; text-align: center; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: space-between; }
+        .info-card:hover { transform: translateY(-6px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border-color: #2563eb; }
+        .info-card-icon { font-size: 28px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; border-radius: 50%; transition: transform 0.3s ease; }
+        .info-card:hover .info-card-icon { transform: scale(1.1) rotate(5deg); }
+        .info-card h4 { color: #1e3a8a; margin-bottom: 10px; font-size: 18px; font-weight: 700; }
+        .info-card p { color: #64748b; font-size: 14px; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
+        .info-card-action { font-size: 14px; font-weight: 600; color: #2563eb; display: flex; align-items: center; gap: 6px; transition: color 0.2s; margin-top: auto; }
+        .info-card:hover .info-card-action { color: #1e3a8a; }
+        .whatsapp-float { position: fixed; bottom: 20px; right: 20px; background-color: #25d366; border-radius: 50px; padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 100; display: flex; align-items: center; justify-content: center; }
+        .whatsapp-float img { width: 40px; height: 40px; }
+        footer { text-align: center; padding: 20px; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; }
         .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; }
         .status-open { background-color: #fef3c7; color: #d97706; }
         .status-progress { background-color: #dbeafe; color: #2563eb; }
         .status-closed { background-color: #d1fae5; color: #059669; }
-
         .priority-high { color: #dc2626; font-weight: bold; }
         .priority-medium { color: #d97706; font-weight: bold; }
         .priority-low { color: #059669; font-weight: bold; }
-
         .sla-danger { color: #dc2626; font-weight: bold; }
         .sla-warning { color: #d97706; font-weight: bold; }
         .sla-normal { color: #059669; font-weight: bold; }
-
         .empty-state, .loading { text-align: center; padding: 20px; color: #6b7280; background: white; }
-
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .header h1 {
-                font-size: 28px;
-            }
-            .cta {
-                padding: 20px;
-            }
-            .cta h2 {
-                font-size: 18px;
-            }
-        }
+        @media (max-width: 768px) { .navbar { flex-direction: column; gap: 10px; } .header h1 { font-size: 28px; } .cta { padding: 20px; } .cta h2 { font-size: 18px; } }
     </style>
 </head>
 <body>
-    <script>
-        if (!localStorage.getItem("usuarioId") || !localStorage.getItem("token")) {
-            window.location.href = "Login.html";
-        }
-    </script>
 
     <div class="navbar">
         <div class="logo">Path Support</div>
         <div class="nav-right">
-            <span class="welcome">
-                Bienvenido <span id="nombreUsuario"></span>
-            </span>
+            <span class="welcome">Bienvenido <span id="nombreUsuario"></span></span>
             <a href="inicio.html">Inicio</a>
-            <a href="#" onclick="logout()">Cerrar sesión</a>
+            <a href="#" id="cerrarSesionBtn">Cerrar sesión</a>
         </div>
     </div>
 
     <div class="header">
         <h1>SOLICITANTE</h1>
         <p>Gestiona tus incidentes y solicitudes de soporte</p>
-        <!-- CAMBIO 2: Se eliminó completamente la sección div class="menu" con los enlaces de accesos rápidos -->
     </div>
 
     <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
         <div class="cta">
-            <h2>¿Tienes un problemа?</h2>
+            <h2>¿Tienes un problema?</h2>
             <p>Genera un ticket y el equipo de soporte te ayudará lo antes posible.</p>
             <button onclick="location.href='crearticket.html'">Crear nuevo ticket</button>
         </div>
@@ -374,14 +106,12 @@
                 <p>Registra problemas técnicos o solicitudes de soporte fácilmente en nuestra plataforma.</p>
                 <div class="info-card-action">Registrar ticket <span>&rarr;</span></div>
             </div>
-
-            <div class="info-card" onclick="/* La tabla inferior ya hace esta función en tu pantalla */">
+            <div class="info-card" onclick="">
                 <div class="info-card-icon" style="background: #fef3c7; color: #d97706;">🔍</div>
                 <h4>Seguimiento</h4>
                 <p>Consulta el estado de tus reportes activos y verifica las respuestas en tiempo real.</p>
                 <div class="info-card-action">Monitorear estados <span>&rarr;</span></div>
             </div>
-
             <div class="info-card" onclick="location.href='index.html'">
                 <div class="info-card-icon" style="background: #f0fdf4; color: #16a34a;">💡</div>
                 <h4>Base de Conocimientos</h4>
@@ -402,108 +132,47 @@
     <script src="../js/config.js"></script>
     <script src="../js/funcionBase.js"></script>
     <script>
-        API_BASE_URL = window.API_BASE_URL;  // viene de ../js/config.js
+        // Todo lo maneja el ámbito dinámico heredado de funcionBase.js
+        const API_BASE_URL = window.API_BASE_URL;
         const REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
         const AUTO_REFRESH_MS = 5000;
         let ticketsRefreshInterval = null;
 
-        const nombre = localStorage.getItem("nombre");
+        const nombre = localStorage.getItem("nombre") || sessionStorage.getItem("nombre");
         if (nombre) {
             document.getElementById("nombreUsuario").innerText = nombre;
         }
 
-        function logout() {
-            localStorage.clear();
-            window.location.href = 'Login.html';
-        }
-
         function getAuthHeaders() {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             return token ? { 'Authorization': `Bearer ${token}` } : {};
         }
 
         async function sincronizarSesion() {
-            const response = await fetch(`${API_BASE_URL}/api/Auth/me`, {
-                headers: getAuthHeaders()
-            });
-
-            if (!response.ok) {
-                throw new Error('No se pudo validar la sesión');
-            }
-
+            const response = await fetch(`${API_BASE_URL}/api/Auth/me`, { headers: getAuthHeaders() });
+            if (!response.ok) throw new Error('No se pudo validar la sesión');
+            
             const usuario = await response.json();
-            localStorage.setItem('usuarioId', usuario.id);
-            localStorage.setItem('rol', usuario.rol);
-            localStorage.setItem('nombre', usuario.nombre);
-            localStorage.setItem('correo', usuario.correo);
-
             document.getElementById("nombreUsuario").innerText = usuario.nombre || '';
             return usuario;
         }
 
-        function getStatusClass(estado) {
-            switch (estado) {
-                case 'Abierto': return 'status-open';
-                case 'En Progreso': return 'status-progress';
-                case 'Resuelto':
-                case 'Cerrado': return 'status-closed';
-                default: return '';
-            }
-        }
-
-        function getPriorityClass(prioridad) {
-            switch (prioridad?.toLowerCase()) {
-                case 'alta':
-                case 'critico': return 'priority-high';
-                case 'media': return 'priority-medium';
-                case 'baja': return 'priority-low';
-                default: return 'priority-medium';
-            }
-        }
-
-        function getSlaClass(slaStatus) {
-            switch (slaStatus) {
-                case 'Vencido': return 'sla-danger';
-                case 'Por vencer': return 'sla-warning';
-                case 'En tiempo':
-                case 'Cumplido': return 'sla-normal';
-                default: return '';
-            }
-        }
-
         function iniciarAutoRefresh() {
-            if (ticketsRefreshInterval) {
-                clearInterval(ticketsRefreshInterval);
-            }
-
+            if (ticketsRefreshInterval) clearInterval(ticketsRefreshInterval);
             ticketsRefreshInterval = setInterval(() => {
-                if (!document.hidden) {
-                    cargarTickets();
-                }
+                if (!document.hidden) cargarTickets();
             }, AUTO_REFRESH_MS);
         }
 
         async function cargarTickets() {
             const tabla = document.getElementById("tablaTickets");
-
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Tickets/mis-tickets`, {
-                    headers: getAuthHeaders()
-                });
-
-                if (!response.ok) {
-                    throw new Error('No se pudieron cargar los tickets del usuario');
-                }
+                const response = await fetch(`${API_BASE_URL}/api/Tickets/mis-tickets`, { headers: getAuthHeaders() });
+                if (!response.ok) throw new Error('Error en la petición');
 
                 const tickets = await response.json();
-
                 if (tickets.length === 0) {
-                    tabla.innerHTML = `
-                        <tr>
-                            <td colspan="7" class="empty-state">
-                                <p>No tienes tickets aún. ¡Crea uno nuevo!</p>
-                            </td>
-                        </tr>`;
+                    tabla.innerHTML = `<tr><td colspan="7" class="empty-state"><p>No tienes tickets aún.</p></td></tr>`;
                     return;
                 }
 
@@ -525,12 +194,7 @@
                 });
             } catch (error) {
                 console.error('Error cargando tickets:', error);
-                tabla.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="empty-state">
-                            <p>Error al cargar los tickets. Intenta nuevamente.</p>
-                        </td>
-                    </tr>`;
+                tabla.innerHTML = `<tr><td colspan="7" class="empty-state"><p>Error al cargar los tickets.</p></td></tr>`;
             }
         }
 
@@ -540,21 +204,11 @@
         }
 
         window.addEventListener('storage', event => {
-            if (event.key === REFRESH_EVENT_KEY && event.newValue) {
-                cargarTickets();
-            }
+            if (event.key === REFRESH_EVENT_KEY && event.newValue) cargarTickets();
         });
 
         document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                cargarTickets();
-            }
-        });
-
-        window.addEventListener('beforeunload', () => {
-            if (ticketsRefreshInterval) {
-                clearInterval(ticketsRefreshInterval);
-            }
+            if (!document.hidden) cargarTickets();
         });
 
         window.onload = function() {
