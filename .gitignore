@@ -11,3 +11,4 @@
 
 # --- Docker ---
 .env
+.vercel
