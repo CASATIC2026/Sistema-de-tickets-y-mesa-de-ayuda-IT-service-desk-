@@ -1,12 +1,6 @@
 /**
  * ======================================================
- * FUNCIONES BASE - Mesa de Ayuda
- * ======================================================
- * Maneja sesión JWT, validación, redirección por rol,
- * notificaciones y utilidades de formato.
- *
- * Depende de:  <script src=".../js/config.js"></script>
- * que define la constante global  window.API_BASE_URL
+ * FUNCIONES BASE - Mesa de Ayuda (SISTEMA CENTRALIZADO)
  * ======================================================
  */
 
@@ -16,21 +10,14 @@ if (typeof window.API_BASE_URL === 'undefined') {
     window.API_BASE_URL = `http://${window.location.hostname}:8080`;
 }
 
-/* ============================ TOKEN ============================ */
+/* ============================ STORAGE Y TOKEN ============================ */
 function getToken() {
-    return (
-        localStorage.getItem('token') ||
-        sessionStorage.getItem('token') ||
-        null
-    );
+    return localStorage.getItem('token') || sessionStorage.getItem('token') || null;
 }
 
 function getCurrentUser() {
     return {
-        id: parseInt(
-            localStorage.getItem('usuarioId') ||
-            sessionStorage.getItem('usuarioId') ||
-            '0', 10),
+        id: parseInt(localStorage.getItem('usuarioId') || sessionStorage.getItem('usuarioId') || '0', 10),
         rol:    localStorage.getItem('rol')    || sessionStorage.getItem('rol')    || '',
         nombre: localStorage.getItem('nombre') || sessionStorage.getItem('nombre') || '',
         correo: localStorage.getItem('correo') || sessionStorage.getItem('correo') || ''
@@ -62,7 +49,6 @@ async function validateSession() {
         const usuario = await response.json();
         if (!usuario || !usuario.id || !usuario.rol) { logout(); return false; }
 
-        // Resincronizar identidad (anti-tamper local)
         ['localStorage', 'sessionStorage'].forEach(store => {
             window[store].setItem('usuarioId', usuario.id);
             window[store].setItem('rol',       usuario.rol);
@@ -78,167 +64,91 @@ async function validateSession() {
     }
 }
 
-/* ============================ HEADERS / FETCH ============================ */
-function getAuthHeaders() {
-    const headers = { 'Content-Type': 'application/json' };
-    const token = getToken();
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-    return headers;
-}
-
-async function fetchWithAuth(url, options = {}) {
-    const merged = {
-        ...options,
-        headers: { ...getAuthHeaders(), ...(options.headers || {}) }
-    };
-
-    try {
-        const response = await fetch(url, merged);
-        
-        if (response.status === 401 || response.status === 403) {
-            console.warn("Token inválido o expirado detectado por la API. Forzando salida.");
-            logout();
-            // Retornamos una promesa que nunca se resuelve para congelar los fetches 
-            // subsiguientes y evitar que los archivos HTML individuales sigan tirando errores
-            return new Promise(() => {}); 
-        }
-        return response;
-    } catch (error) {
-        console.error("Error de red o conexión con la API:", error);
-        throw error;
+/* ============================ LOGOUT ABSOLUTO DEFINITIVO ============================ */
+function logout(event) {
+    if (event && typeof event.preventDefault === 'function') {
+        event.preventDefault();
     }
-}
+    
+    console.log("Cerrando sesión de forma definitiva...");
 
-/* ============================ ROL / EXPIRACIÓN ============================ */
-function getUserRole() {
-    return localStorage.getItem('rol') || sessionStorage.getItem('rol') || '';
-}
-
-function tokenExpired() {
-    const exp = localStorage.getItem('tokenExpiration') || sessionStorage.getItem('tokenExpiration');
-    if (!exp) return false; // Cambiado a false temporalmente para evitar falsos bloqueos si no manejas expiración estricta
-    return new Date(exp) < new Date();
-}
-
-/* ============================ LOGOUT REFORZADO ============================ */
-function logout() {
-    console.log("Iniciando proceso de cierre de sesión seguro...");
-
+    // Limpieza total y absoluta de la memoria
     localStorage.clear();
     sessionStorage.clear();
 
-    localStorage.removeItem('token');
-    localStorage.removeItem('rol');
-    localStorage.removeItem('tokenExpiration');
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('rol');
-    sessionStorage.removeItem('tokenExpiration');
-
-    setTimeout(() => {
-        console.log("Almacenamiento limpio. Redirigiendo al Login de forma segura.");
-        window.location.replace('../solicitante/Login.html'); 
-    }, 100);
+    // Redirección forzada usando la URL raíz del servidor para evitar bucles de carpetas
+    const loginDestino = window.location.origin + '/solicitante/Login.html';
+    console.log("Redirigiendo a:", loginDestino);
+    window.location.replace(loginDestino); 
 }
 
-/* ============================ REDIRECCIÓN ============================ */
-
-// Usamos window para blindar la variable contra redeclaraciones de ámbito en el navegador
+/* ============================ REDIRECCIÓN Y PROTECCIÓN ============================ */
 if (typeof window.redireccionEnProceso === 'undefined') {
     window.redireccionEnProceso = false;
 }
 
 function redirectByRole(rol) {
-    if (window.redireccionEnProceso) {
-        console.log("Redirección bloqueada para evitar loop");
-        return;
-    }
+    if (window.redireccionEnProceso) return;
 
     const paginaActual = window.location.pathname.toLowerCase();
     let destino = '';
-
     const rolNormalizado = (rol || '').trim().toLowerCase();
 
     switch (rolNormalizado) {
-        case 'admin':
-            destino = '/administrador/dashboard.html';
-            break;
-
-        case 'tecnico':
-            destino = '/administrador/tecnico.html';
-            break;
-
+        case 'admin':      destino = '/administrador/dashboard.html'; break;
+        case 'tecnico':    destino = '/administrador/tecnico.html'; break;
         case 'solicitante':
-        default:
-            destino = '/solicitante/inicio.html';
-            break;
+        default:           destino = '/solicitante/inicio.html'; break;
     }
 
-    // Comprobación exacta al final de la ruta del navegador para evitar loops
     if (paginaActual.endsWith(destino.toLowerCase())) {
-        console.log("Ya estamos en la página correcta:", destino);
         return;
     }
 
     window.redireccionEnProceso = true;
-    console.log("Redirigiendo hacia:", destino);
     window.location.href = window.location.origin + destino;
 }
 
-
-/* ============================ PROTECCIÓN REFORZADA ============================ */
 async function protectPage() {
     const paginaActual = window.location.pathname.toLowerCase();
     
     if (paginaActual.includes("login.html")) {
-        console.log("Estamos en el Login, deteniendo protectPage para evitar bucle.");
         return; 
     }
 
-    if (!isAuthenticated() || tokenExpired()) { 
+    if (!isAuthenticated()) { 
         logout(); 
         return; 
     }
     await validateSession();
 }
 
-/* ============================ FORMATO ============================ */
+/* ============================ UTILIDADES DE FORMATO ============================ */
 function formatDate(dateString) {
     if (!dateString) return '-';
     const d = new Date(dateString);
-    return d.toLocaleDateString('es-ES', {
-        day: '2-digit', month: '2-digit', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
-    });
+    return d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
 function getSlaClass(slaStatus) {
-    switch (slaStatus) {
-        case 'Vencido':    return 'sla-danger';
-        case 'Por vencer': return 'sla-warning';
-        case 'En tiempo':
-        case 'Cumplido':   return 'sla-normal';
-        default:           return '';
-    }
+    if (slaStatus === 'Vencido') return 'sla-danger';
+    if (slaStatus === 'Por vencer') return 'sla-warning';
+    if (['En tiempo', 'Cumplido'].includes(slaStatus)) return 'sla-normal';
+    return '';
 }
 
 function getPriorityClass(prioridad) {
-    switch ((prioridad || '').toLowerCase()) {
-        case 'alta':
-        case 'critico': return 'priority-high';
-        case 'media':   return 'priority-medium';
-        case 'baja':    return 'priority-low';
-        default:        return 'priority-medium';
-    }
+    const p = (prioridad || '').toLowerCase();
+    if (['alta', 'critico'].includes(p)) return 'priority-high';
+    if (p === 'baja') return 'priority-low';
+    return 'priority-medium';
 }
 
 function getStatusClass(estado) {
-    switch (estado) {
-        case 'Abierto':     return 'status-open';
-        case 'En Progreso': return 'status-progress';
-        case 'Resuelto':
-        case 'Cerrado':     return 'status-closed';
-        default:            return '';
-    }
+    if (estado === 'Abierto') return 'status-open';
+    if (estado === 'En Progreso') return 'status-progress';
+    if (['Resuelto', 'Cerrado'].includes(estado)) return 'status-closed';
+    return '';
 }
 
 /* ============================ NOTIFICACIONES ============================ */
@@ -247,15 +157,10 @@ function showNotification(message, type = 'info') {
     n.className = `notification notification-${type}`;
     n.textContent = message;
     n.style.cssText = `
-        position: fixed; top: 20px; right: 20px;
-        padding: 15px 25px; border-radius: 8px; color: white;
-        font-weight: 500; z-index: 10000;
-        animation: slideIn 0.3s ease; max-width: 90%;
+        position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 8px; color: white;
+        font-weight: 500; z-index: 10000; animation: slideIn 0.3s ease; max-width: 90%;
     `;
-    const colors = {
-        success: '#10b981', error: '#ef4444',
-        warning: '#f59e0b', info: '#3b82f6'
-    };
+    const colors = { success: '#10b981', error: '#ef4444', warning: '#f59e0b', info: '#3b82f6' };
     n.style.backgroundColor = colors[type] || colors.info;
     document.body.appendChild(n);
     setTimeout(() => {
@@ -264,40 +169,40 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-/* ============================ DOM READY UNIFICADO ============================ */
+/* ============================ DOM READY CENTRALIZADO ============================ */
 document.addEventListener('DOMContentLoaded', async function () {
-    
     const esLogin = window.location.pathname.toLowerCase().includes('login.html');
 
     if (!esLogin) {
         await protectPage();
     } else {
         const rolGuardado = localStorage.getItem('rol') || sessionStorage.getItem('rol');
-        if (rolGuardado && isAuthenticated() && !tokenExpired()) {
-            console.log("Usuario ya autenticado con rol: " + rolGuardado + ". Redirigiendo...");
+        if (rolGuardado && isAuthenticated()) {
             redirectByRole(rolGuardado);
         }
     }
 
-    const logoutBtn = document.getElementById('logoutBtn') || document.getElementById('cerrarSesionBtn');
-    if (logoutBtn) {
-        logoutBtn.removeEventListener('click', logout);
-        logoutBtn.addEventListener('click', logout);
-    }
+    // Vinculación segura de eventos para TODOS los botones del sistema
+    const botonesLogout = ['logoutBtn', 'cerrarSesionBtn'];
+    botonesLogout.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.removeAttribute('onclick'); // Eliminamos cualquier onclick viejo del HTML
+            btn.addEventListener('click', logout);
+        }
+    });
 
-    // FAQ logic unificada en un solo lugar limpio
+    // Lógica de FAQs
     document.querySelectorAll('.faq-question').forEach(button => {
         button.addEventListener('click', function () {
             const answer = this.nextElementSibling;
             const parent = this.parentElement;
-
             document.querySelectorAll('.faq-answer').forEach(item => {
                 if (item !== answer) {
                     item.style.display = 'none';
                     item.parentElement?.classList.remove('active');
                 }
             });
-
             if (answer.style.display === 'block') {
                 answer.style.display = 'none';
                 parent?.classList.remove('active');
@@ -309,10 +214,12 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 });
 
-/* ============================ STYLES ============================ */
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn  { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
-`;
-document.head.appendChild(style);
+/* ============================ STYLES ISOLATED ============================ */
+{
+    const estilosNotificacion = document.createElement('style');
+    estilosNotificacion.textContent = `
+        @keyframes slideIn  { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+    `;
+    document.head.appendChild(estilosNotificacion);
+}
