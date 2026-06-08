@@ -491,7 +491,7 @@
             <p>Gestión y resolución de tickets - <span id="nombreUsuario"></span></p>
         </div>
         <div class="header-actions">
-            <a href="#" onclick="logout()">Cerrar sesión</a>
+            <a href="#" id="logoutBtn">Cerrar Sesión</a>
         </div>
     </header>
 
@@ -640,10 +640,6 @@
         // Mostrar nombre
         document.getElementById('nombreUsuario').textContent = localStorage.getItem('nombre') || '';
 
-        function logout() {
-            localStorage.clear();
-            window.location.href = '../solicitante/Login.html';
-        }
 
         function getAuthHeaders() {
             const token = localStorage.getItem('token');
@@ -837,7 +833,7 @@ async function cargarTickets() {
             }
         }
 
-        function configurarAccionesDeAsignacion(ticket) {
+       function configurarAccionesDeAsignacion(ticket) {
             const selector = document.getElementById('selectorTecnico');
             const botonAsignar = document.getElementById('btnAsignarTicket');
 
@@ -870,10 +866,6 @@ async function cargarTickets() {
                 comentariosDiv.innerHTML = '<p style="color: #6b7280; text-align: center;">No hay comentarios aún</p>';
                 return;
             }
-
-            if (!localStorage.getItem('token')) {
-    window.location.href = 'Login.html';
-}
 
             comentariosDiv.innerHTML = comentarios.map(c => `
                 <div class="comment ${c.usuarioRol === 'Tecnico' || c.usuarioRol === 'Admin' ? 'tecnico' : ''} ${c.usuarioId === usuarioId ? 'own' : ''}">
@@ -921,9 +913,9 @@ async function cargarTickets() {
             }
 
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Tickets/${ticketActual.id}/estado`, {
+                // Cambiado a fetchWithAuth para consistencia global
+                const response = await fetchWithAuth(`${API_BASE_URL}/api/Tickets/${ticketActual.id}/estado`, {
                     method: 'PUT',
-                    headers: getAuthHeaders(),
                     body: JSON.stringify({ estado: estado })
                 });
 
@@ -951,9 +943,9 @@ async function cargarTickets() {
             }
 
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Tickets/${ticketActual.id}/asignar`, {
+                // Cambiado a fetchWithAuth para consistencia global
+                const response = await fetchWithAuth(`${API_BASE_URL}/api/Tickets/${ticketActual.id}/asignar`, {
                     method: 'PUT',
-                    headers: getAuthHeaders(),
                     body: JSON.stringify({ tecnicoId: parseInt(tecnicoId, 10) })
                 });
 
@@ -982,9 +974,9 @@ async function cargarTickets() {
 
             try {
                 boton.disabled = true;
-                const response = await fetch(`${API_BASE_URL}/api/Comentarios`, {
+                // Cambiado a fetchWithAuth para consistencia global
+                const response = await fetchWithAuth(`${API_BASE_URL}/api/Comentarios`, {
                     method: 'POST',
-                    headers: getAuthHeaders(),
                     body: JSON.stringify({
                         ticketId: ticketActual.id,
                         mensaje: mensaje
@@ -1024,23 +1016,23 @@ async function cargarTickets() {
         });
 
         window.addEventListener('storage', event => {
-    if (event.key !== REFRESH_EVENT_KEY || !event.newValue) {
-        return;
-    }
+            if (event.key !== REFRESH_EVENT_KEY || !event.newValue) {
+                return;
+            }
 
-    try {
-        const payload = JSON.parse(event.newValue);
+            try {
+                const payload = JSON.parse(event.newValue);
 
-        if (payload.scope === 'comment' && ticketActual && payload.ticketId === ticketActual.id) {
-            cargarComentarios();
-            return;
-        }
+                if (payload.scope === 'comment' && ticketActual && payload.ticketId === ticketActual.id) {
+                    cargarComentarios();
+                    return;
+                }
 
-        cargarTickets();
-    } catch (error) {
-        console.error('Error procesando actualización:', error);
-    }
-});
+                cargarTickets();
+            } catch (error) {
+                console.error('Error procesando actualización:', error);
+            }
+        });
 
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
