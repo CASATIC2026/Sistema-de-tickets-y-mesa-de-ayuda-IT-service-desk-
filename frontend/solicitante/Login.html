@@ -335,27 +335,18 @@ let selectedTokenExpiration = 2;
                     throw new Error("No se recibió token válido");
                 }
 
-                // ======================================================
-                // GUARDAR TOKEN TEMPORALMENTE
-                // ======================================================
                 localStorage.setItem("token", data.token);
                 sessionStorage.setItem("token", data.token);
 
                 localStorage.setItem("tokenExpiration", data.expiration);
                 sessionStorage.setItem("tokenExpiration", data.expiration);
 
-                // ======================================================
-                // VALIDAR IDENTIDAD REAL
-                // ======================================================
                 const usuario = await obtenerSesionActual(data.token);
 
                 if (!usuario || !usuario.id || !usuario.rol) {
                     throw new Error("Datos de sesión inválidos");
                 }
 
-                // ======================================================
-                // GUARDAR IDENTIDAD COMPLETA
-                // ======================================================
                 localStorage.setItem("usuarioId", usuario.id);
                 localStorage.setItem("rol", usuario.rol);
                 localStorage.setItem("nombre", usuario.nombre || "");
@@ -366,22 +357,15 @@ let selectedTokenExpiration = 2;
                 sessionStorage.setItem("nombre", usuario.nombre || "");
                 sessionStorage.setItem("correo", usuario.correo || "");
 
-                // ======================================================
-                // SOLUCIÓN AL F5: Reiniciar bandera e invocar con el rol correcto
-                // ======================================================
                 window.redireccionEnProceso = false; 
                 console.log("Sesión validada e iniciada de manera inmediata para:", usuario.rol);
                 
-                // Pasamos 'usuario.rol' que sí tiene el dato real en vez de 'data.rol'
                 redirectByRole(usuario.rol);
 
             } catch (error) {
 
                 console.error("Error de login:", error);
 
-                // ======================================================
-                // LIMPIEZA TOTAL SI FALLA
-                // ======================================================
                 localStorage.clear();
                 sessionStorage.clear();
 
