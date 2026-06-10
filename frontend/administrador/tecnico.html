@@ -629,82 +629,16 @@
     <script src="../js/config.js"></script>
 <script src="../js/funcionBase.js"></script>
 <script>
-        const REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
         const AUTO_REFRESH_MS = 5000;
         let ticketActual = null;
         let comentariosInterval = null;
         let tecnicosDisponibles = [];
         let ticketsRefreshInterval = null;
 
-        // Mostrar nombre
-        document.getElementById('nombreUsuario').textContent = localStorage.getItem('nombre') || '';
-
-
-        function getAuthHeaders() {
-            const token = localStorage.getItem('token');
-            return {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            };
-        }
-
-        function escapeHtml(text) {
-            return (text || '').replace(/[&<>"']/g, char => ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#39;'
-            }[char]));
-        }
-
-        function actualizarEstadoChat(mensaje) {
-            document.getElementById('chatStatus').textContent = mensaje;
-            document.getElementById('chatUpdatedAt').textContent = `Actualizado ${new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
-        }
-
-        function esAdmin() {
-            return localStorage.getItem('rol') === 'Admin';
-        }
-
-        function notifyDataChanged(scope = 'tickets', ticketId = null) {
-            localStorage.setItem(REFRESH_EVENT_KEY, JSON.stringify({
-                scope,
-                ticketId,
-                timestamp: Date.now()
-            }));
-        }
-
-        function getPriorityClass(p) {
-            switch(p?.toLowerCase()) {
-                case 'alta': case 'critico': return 'priority-high';
-                case 'media': return 'priority-medium';
-                case 'baja': return 'priority-low';
-                default: return 'priority-medium';
-            }
-        }
-
-        function getStatusClass(s) {
-            switch(s) {
-                case 'Abierto': return 'status-open';
-                case 'En Progreso': return 'status-progress';
-                case 'Resuelto': case 'Cerrado': return 'status-closed';
-                default: return '';
-            }
-        }
-
-        function getSlaClass(s) {
-            switch(s) {
-                case 'Vencido': return 'sla-danger';
-                case 'Por vencer': return 'sla-warning';
-                default: return 'sla-normal';
-            }
-        }
+        document.getElementById('nombreUsuario').textContent = getCurrentUser().nombre;
 
 async function cargarTickets() {
     try {
-        // SOLUCIÓN: Cambiamos fetch nativo por fetchWithAuth.
-        // No necesita pasar headers de forma manual ya que la función base se encarga de inyectarlos.
         const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets`);
 
         if (!response.ok) {
@@ -805,13 +739,15 @@ async function cargarTickets() {
 
                 const comentarios = await response.json();
                 renderComentarios(comentarios);
-                actualizarEstadoChat(comentarios.length > 0 ? 'Conversación activa' : 'Sin mensajes todavía');
+                document.getElementById('chatStatus').textContent = comentarios.length > 0 ? 'Conversación activa' : 'Sin mensajes todavía';
+                document.getElementById('chatUpdatedAt').textContent = `Actualizado ${new Date().toLocaleTimeString()}`;
             } catch (error) {
                 console.error(error);
                 document.getElementById('comentariosList').innerHTML = '<p style="color: #6b7280; text-align: center;">No fue posible cargar el chat.</p>';
-                actualizarEstadoChat('Chat no disponible');
             }
         }
+
+        function esAdmin() { return getCurrentUser().rol === 'Admin'; }
 
         async function cargarTecnicosDisponibles() {
             if (!esAdmin()) return;
@@ -858,25 +794,8 @@ async function cargarTickets() {
         }
 
         function renderComentarios(comentarios) {
-            const comentariosDiv = document.getElementById('comentariosList');
-            const usuarioId = parseInt(localStorage.getItem('usuarioId') || sessionStorage.getItem('usuarioId') || '0', 10);
-
-            if (!comentarios || comentarios.length === 0) {
-                comentariosDiv.innerHTML = '<p style="color: #6b7280; text-align: center;">No hay comentarios aún</p>';
-                return;
-            }
-
-            comentariosDiv.innerHTML = comentarios.map(c => `
-                <div class="comment ${c.usuarioRol === 'Tecnico' || c.usuarioRol === 'Admin' ? 'tecnico' : ''} ${c.usuarioId === usuarioId ? 'own' : ''}">
-                    <div class="comment-header">
-                        <strong>${escapeHtml(c.usuarioNombre)} (${escapeHtml(c.usuarioRol)})</strong>
-                        <span>${new Date(c.fecha).toLocaleString('es-ES')}</span>
-                    </div>
-                    <p>${escapeHtml(c.mensaje)}</p>
-                </div>
-            `).join('');
-
-            comentariosDiv.scrollTop = comentariosDiv.scrollHeight;
+            const u = getCurrentUser();
+            window.renderChatMessages('comentariosList', comentarios, u.id, u.rol);
         }
 
         function iniciarAutoRefreshComentarios() {
@@ -1012,7 +931,7 @@ async function cargarTickets() {
         });
 
         window.addEventListener('storage', event => {
-            if (event.key !== REFRESH_EVENT_KEY || !event.newValue) {
+            if (event.key !== window.REFRESH_EVENT_KEY || !event.newValue) {
                 return;
             }
 
