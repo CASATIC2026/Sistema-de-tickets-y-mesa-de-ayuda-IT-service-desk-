@@ -630,80 +630,13 @@
     <script src="../js/config.js"></script>
 <script src="../js/funcionBase.js"></script>
 <script>
-        const REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
         const AUTO_REFRESH_MS = 5000;
         let ticketActual = null;
         let comentariosInterval = null;
         let tecnicosDisponibles = [];
         let ticketsRefreshInterval = null;
 
-        document.getElementById('nombreUsuario').textContent = localStorage.getItem('nombre') || '';
-
-        function logout() {
-            localStorage.clear();
-            window.location.href = '../solicitante/Login.html';
-        }
-
-        function getAuthHeaders() {
-            const token = localStorage.getItem('token');
-            return {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            };
-        }
-
-        function escapeHtml(text) {
-            return (text || '').replace(/[&<>"']/g, char => ({
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#39;'
-            }[char]));
-        }
-
-        function actualizarEstadoChat(mensaje) {
-            document.getElementById('chatStatus').textContent = mensaje;
-            document.getElementById('chatUpdatedAt').textContent = `Actualizado ${new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`;
-        }
-
-        function esAdmin() {
-            return localStorage.getItem('rol') === 'Admin';
-        }
-
-        function notifyDataChanged(scope = 'tickets', ticketId = null) {
-            localStorage.setItem(REFRESH_EVENT_KEY, JSON.stringify({
-                scope,
-                ticketId,
-                timestamp: Date.now()
-            }));
-        }
-
-        function getPriorityClass(p) {
-            switch(p?.toLowerCase()) {
-                case 'alta': case 'critico': return 'priority-high';
-                case 'media': return 'priority-medium';
-                case 'baja': return 'priority-low';
-                default: return 'priority-medium';
-            }
-        }
-
-        function getStatusClass(s) {
-            switch(s) {
-                case 'Abierto': return 'status-open';
-                case 'En Progreso': return 'status-progress';
-                case 'Resuelto': case 'Cerrado': return 'status-closed';
-                default: return '';
-            }
-        }
-
-        function getSlaClass(s) {
-            switch(s) {
-                case 'Vencido': return 'sla-danger';
-                case 'Por vencer': return 'sla-warning';
-                default: return 'sla-normal';
-            }
-        }
+        document.getElementById('nombreUsuario').textContent = getCurrentUser().nombre;
 
         async function cargarTickets() {
             try {
@@ -755,7 +688,7 @@
 
         async function verDetalle(id) {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Tickets/${id}`, {
+                const response = await fetch(`${window.API_BASE_URL}/api/Tickets/${id}`, {
                     headers: getAuthHeaders()
                 });
 
