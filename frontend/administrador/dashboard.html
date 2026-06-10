@@ -55,7 +55,6 @@
             padding: 25px;
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -97,7 +96,6 @@
         .stat-card.red h3 { color: #ef4444; }
         .stat-card.purple h3 { color: #8b5cf6; }
 
-        /* Sections */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -123,7 +121,6 @@
             padding: 20px;
         }
 
-        /* Recent Tickets */
         .ticket-item {
             display: flex;
             justify-content: space-between;
@@ -162,7 +159,6 @@
         .badge.medium { background: #fef3c7; color: #92400e; }
         .badge.low { background: #dcfce7; color: #166534; }
 
-        /* Quick Actions */
         .quick-actions {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -193,7 +189,6 @@
             margin-bottom: 10px;
         }
 
-        /* SLA Chart placeholder */
         .chart-placeholder {
             height: 200px;
             display: flex;
@@ -211,7 +206,6 @@
             font-size: 14px;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -256,9 +250,7 @@
     <script src="../js/funcionBase.js"></script>
 
     <script>
-        // Verificación segura utilizando funcionBase.js cargada previamente
         const token = getToken();
-        // Si no existe la función getUserRole en tu script base, usamos localStorage directamente de forma segura
         const rol = (typeof getUserRole === 'function') ? getUserRole().trim() : (localStorage.getItem('rol') || '').trim();
 
         if (!token) {
@@ -380,8 +372,6 @@
     </footer>
 
     <script>
-        // Las variables base se configuran al cargar completamente el DOM
-        let API_BASE_URL = window.API_BASE_URL || ""; 
         const REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
         const AUTO_REFRESH_MS = 5000;
         let dashboardRefreshInterval = null;
@@ -418,9 +408,8 @@
         }
 
         async function cargarEstadisticas() {
-            if (!API_BASE_URL) return;
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Tickets/estadisticas`, {
+                const response = await fetch(`${window.API_BASE_URL}/api/Tickets/estadisticas`, {
                     headers: getAuthHeaders()
                 });
                 const stats = await response.json();
@@ -442,9 +431,8 @@
         }
 
         async function cargarTicketsRecientes() {
-            if (!API_BASE_URL) return;
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Tickets`, {
+                const response = await fetch(`${window.API_BASE_URL}/api/Tickets`, {
                     headers: getAuthHeaders()
                 });
 
