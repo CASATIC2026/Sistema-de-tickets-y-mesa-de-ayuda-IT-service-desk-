@@ -1,16 +1,9 @@
-/**
- * ======================================================
- * FUNCIONES BASE - Mesa de Ayuda (SISTEMA CENTRALIZADO)
- * ======================================================
- */
 
-// Fallback defensivo si por alguna razón config.js no fue cargado
 if (typeof window.API_BASE_URL === 'undefined') {
     console.warn('[funcionBase] window.API_BASE_URL no definido; usando fallback LAN dinamico');
     window.API_BASE_URL = `http://${window.location.hostname}:8080`;
 }
 
-/* ============================ STORAGE Y TOKEN ============================ */
 function getToken() {
     return localStorage.getItem('token') || sessionStorage.getItem('token') || null;
 }
@@ -24,13 +17,33 @@ function getCurrentUser() {
     };
 }
 
+function getAuthHeaders(extraHeaders = {}) {
+    const token = getToken();
+    return {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        ...extraHeaders
+    };
+}
+
+window.fetchWithAuth = async function fetchWithAuth(url, options = {}) {
+    const token = getToken();
+    return fetch(url, {
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+            ...(options.headers || {})
+        }
+    });
+};
+
 function isAuthenticated() {
     const t = getToken();
     const u = getCurrentUser();
     return !!(t && u.id > 0 && u.rol && u.nombre);
 }
 
-/* ============================ VALIDACIÓN SERVER ============================ */
 async function validateSession() {
     const token = getToken();
     if (!token) { logout(); return false; }
@@ -64,7 +77,6 @@ async function validateSession() {
     }
 }
 
-/* ============================ LOGOUT ABSOLUTO DEFINITIVO ============================ */
 function logout(event) {
     if (event && typeof event.preventDefault === 'function') {
         event.preventDefault();
@@ -72,17 +84,14 @@ function logout(event) {
     
     console.log("Cerrando sesión de forma definitiva...");
 
-    // Limpieza total y absoluta de la memoria
     localStorage.clear();
     sessionStorage.clear();
 
-    // Redirección forzada usando la URL raíz del servidor para evitar bucles de carpetas
     const loginDestino = window.location.origin + '/solicitante/Login.html';
     console.log("Redirigiendo a:", loginDestino);
     window.location.replace(loginDestino); 
 }
 
-/* ============================ REDIRECCIÓN Y PROTECCIÓN ============================ */
 if (typeof window.redireccionEnProceso === 'undefined') {
     window.redireccionEnProceso = false;
 }
@@ -123,7 +132,6 @@ async function protectPage() {
     await validateSession();
 }
 
-/* ============================ UTILIDADES DE FORMATO ============================ */
 function formatDate(dateString) {
     if (!dateString) return '-';
     const d = new Date(dateString);
@@ -151,7 +159,6 @@ function getStatusClass(estado) {
     return '';
 }
 
-/* ============================ NOTIFICACIONES ============================ */
 function showNotification(message, type = 'info') {
     const n = document.createElement('div');
     n.className = `notification notification-${type}`;
@@ -169,7 +176,6 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-/* ============================ DOM READY CENTRALIZADO ============================ */
 document.addEventListener('DOMContentLoaded', async function () {
     const esLogin = window.location.pathname.toLowerCase().includes('login.html');
 
@@ -182,17 +188,15 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     }
 
-    // Vinculación segura de eventos para TODOS los botones del sistema
     const botonesLogout = ['logoutBtn', 'cerrarSesionBtn'];
     botonesLogout.forEach(id => {
         const btn = document.getElementById(id);
         if (btn) {
-            btn.removeAttribute('onclick'); // Eliminamos cualquier onclick viejo del HTML
+            btn.removeAttribute('onclick'); 
             btn.addEventListener('click', logout);
         }
     });
 
-    // Lógica de FAQs
     document.querySelectorAll('.faq-question').forEach(button => {
         button.addEventListener('click', function () {
             const answer = this.nextElementSibling;
@@ -214,7 +218,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 });
 
-/* ============================ STYLES ISOLATED ============================ */
 {
     const estilosNotificacion = document.createElement('style');
     estilosNotificacion.textContent = `
