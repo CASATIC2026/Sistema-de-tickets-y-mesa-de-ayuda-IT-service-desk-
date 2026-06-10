@@ -16,9 +16,13 @@
     const apiPort = window.API_PORT || '8080';
     let apiBaseUrl = `http://${host}:${apiPort}`;
 
+    // Cualquier frontend hospedado en Vercel debe hablar con Railway.
+    if (host.endsWith('.vercel.app')) {
+        apiBaseUrl = railwayApiUrl;
+    }
+
     // Permite definir overrides por hostname (ej. dominios de prod / staging)
     const overrides = {
-        'sistema-de-tickets-y-mesa-de-ayuda.vercel.app': railwayApiUrl,
         '192.168.204.82': 'http://192.168.204.82:8080',
         'localhost': 'http://192.168.204.82:8080'
     };
