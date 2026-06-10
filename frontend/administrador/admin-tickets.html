@@ -630,7 +630,6 @@
     <script src="../js/config.js"></script>
 <script src="../js/funcionBase.js"></script>
 <script>
-        API_BASE_URL = window.API_BASE_URL;  // viene de ../js/config.js
         const REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
         const AUTO_REFRESH_MS = 5000;
         let ticketActual = null;
@@ -638,7 +637,6 @@
         let tecnicosDisponibles = [];
         let ticketsRefreshInterval = null;
 
-        // Mostrar nombre
         document.getElementById('nombreUsuario').textContent = localStorage.getItem('nombre') || '';
 
         function logout() {
@@ -709,7 +707,7 @@
 
         async function cargarTickets() {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Tickets`, {
+                const response = await fetch(`${window.API_BASE_URL}/api/Tickets`, {
                     headers: getAuthHeaders()
                 });
 
@@ -720,7 +718,6 @@
                 const tickets = await response.json();
                 const tabla = document.getElementById('tablaTickets');
 
-                // Stats
                 document.getElementById('totalTickets').textContent = tickets.length;
                 document.getElementById('ticketsAbiertos').textContent = tickets.filter(t => t.estado === 'Abierto').length;
                 document.getElementById('ticketsProgreso').textContent = tickets.filter(t => t.estado === 'En Progreso').length;
