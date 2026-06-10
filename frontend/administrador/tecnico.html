@@ -629,7 +629,6 @@
     <script src="../js/config.js"></script>
 <script src="../js/funcionBase.js"></script>
 <script>
-        API_BASE_URL = window.API_BASE_URL;  // viene de ../js/config.js
         const REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
         const AUTO_REFRESH_MS = 5000;
         let ticketActual = null;
@@ -706,7 +705,7 @@ async function cargarTickets() {
     try {
         // SOLUCIÓN: Cambiamos fetch nativo por fetchWithAuth.
         // No necesita pasar headers de forma manual ya que la función base se encarga de inyectarlos.
-        const response = await fetchWithAuth(`http://192.168.204.82:8080/api/Tickets`);
+        const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets`);
 
         if (!response.ok) {
             throw new Error('No se pudieron cargar los tickets');
@@ -753,7 +752,7 @@ async function cargarTickets() {
 
         async function verDetalle(id) {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Tickets/${id}`, {
+                const response = await fetch(`${window.API_BASE_URL}/api/Tickets/${id}`, {
                     headers: getAuthHeaders()
                 });
 
@@ -796,7 +795,7 @@ async function cargarTickets() {
             if (!ticketActual) return;
 
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Comentarios/ticket/${ticketActual.id}`, {
+                const response = await fetch(`${window.API_BASE_URL}/api/Comentarios/ticket/${ticketActual.id}`, {
                     headers: getAuthHeaders()
                 });
 
@@ -818,7 +817,7 @@ async function cargarTickets() {
             if (!esAdmin()) return;
 
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Auth/tecnicos`, {
+                const response = await fetch(`${window.API_BASE_URL}/api/Auth/tecnicos`, {
                     headers: getAuthHeaders()
                 });
 
@@ -914,7 +913,7 @@ async function cargarTickets() {
 
             try {
                 // Cambiado a fetchWithAuth para consistencia global
-                const response = await fetchWithAuth(`${API_BASE_URL}/api/Tickets/${ticketActual.id}/estado`, {
+            const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets/${ticketActual.id}/estado`, {
                     method: 'PUT',
                     body: JSON.stringify({ estado: estado })
                 });
@@ -943,8 +942,7 @@ async function cargarTickets() {
             }
 
             try {
-                // Cambiado a fetchWithAuth para consistencia global
-                const response = await fetchWithAuth(`${API_BASE_URL}/api/Tickets/${ticketActual.id}/asignar`, {
+            const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets/${ticketActual.id}/asignar`, {
                     method: 'PUT',
                     body: JSON.stringify({ tecnicoId: parseInt(tecnicoId, 10) })
                 });
@@ -974,8 +972,7 @@ async function cargarTickets() {
 
             try {
                 boton.disabled = true;
-                // Cambiado a fetchWithAuth para consistencia global
-                const response = await fetchWithAuth(`${API_BASE_URL}/api/Comentarios`, {
+            const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Comentarios`, {
                     method: 'POST',
                     body: JSON.stringify({
                         ticketId: ticketActual.id,
@@ -998,7 +995,6 @@ async function cargarTickets() {
             }
         }
 
-        // Cerrar modal al hacer clic fuera
         window.onclick = function(event) {
             const modal = document.getElementById('ticketModal');
             if (event.target === modal) {
