@@ -32,9 +32,5 @@
         apiBaseUrl = window.__API_BASE_URL;
     }
 
-    Object.defineProperty(window, 'API_BASE_URL', {
-        value: apiBaseUrl,
-        writable: false,
-        configurable: false
-    });
+    window.API_BASE_URL = apiBaseUrl;
 })();
