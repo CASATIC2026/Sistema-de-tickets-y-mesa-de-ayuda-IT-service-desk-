@@ -132,8 +132,6 @@
     <script src="../js/config.js"></script>
     <script src="../js/funcionBase.js"></script>
     <script>
-        // Todo lo maneja el ámbito dinámico heredado de funcionBase.js
-        const API_BASE_URL = window.API_BASE_URL;
         const REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
         const AUTO_REFRESH_MS = 5000;
         let ticketsRefreshInterval = null;
@@ -149,7 +147,7 @@
         }
 
         async function sincronizarSesion() {
-            const response = await fetch(`${API_BASE_URL}/api/Auth/me`, { headers: getAuthHeaders() });
+            const response = await fetch(`${window.API_BASE_URL}/api/Auth/me`, { headers: getAuthHeaders() });
             if (!response.ok) throw new Error('No se pudo validar la sesión');
             
             const usuario = await response.json();
@@ -167,7 +165,7 @@
         async function cargarTickets() {
             const tabla = document.getElementById("tablaTickets");
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Tickets/mis-tickets`, { headers: getAuthHeaders() });
+                const response = await fetch(`${window.API_BASE_URL}/api/Tickets/mis-tickets`, { headers: getAuthHeaders() });
                 if (!response.ok) throw new Error('Error en la petición');
 
                 const tickets = await response.json();
