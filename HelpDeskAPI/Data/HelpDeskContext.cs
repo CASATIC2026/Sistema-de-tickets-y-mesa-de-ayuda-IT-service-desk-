@@ -128,6 +128,57 @@ namespace HelpDeskAPI.Data
                 config["UsuarioSeed:Password"] ?? "Usuario#Sec2026!Strong",
                 config["UsuarioSeed:Nombre"] ?? "Usuario Demo",
                 userRol, passwordService);
+
+            if (!await Tickets.AnyAsync())
+            {
+                var usuarioDemo = await Usuarios.FirstAsync(u => u.Correo == (config["UsuarioSeed:Email"] ?? "usuario@helpdesk.com").Trim().ToLowerInvariant());
+                var tecnicoDemo = await Usuarios.FirstAsync(u => u.Correo == (config["TecnicoSeed:Email"] ?? "tecnico@helpdesk.com").Trim().ToLowerInvariant());
+
+                var hardware = await Categorias.FirstAsync(c => c.Nombre == "Hardware");
+                var software = await Categorias.FirstAsync(c => c.Nombre == "Software");
+                var red = await Categorias.FirstAsync(c => c.Nombre == "Red");
+
+                Tickets.AddRange(
+                    new Ticket
+                    {
+                        Titulo = "No enciende el equipo",
+                        Descripcion = "El usuario reporta que su equipo no enciende al presionar el botón de inicio.",
+                        Prioridad = "Alta",
+                        Estado = "Abierto",
+                        FechaCreacion = DateTime.UtcNow.AddHours(-8),
+                        FechaLimite = DateTime.UtcNow.AddHours(16),
+                        UsuarioId = usuarioDemo.Id,
+                        CategoriaId = hardware.Id
+                    },
+                    new Ticket
+                    {
+                        Titulo = "Error al abrir sistema interno",
+                        Descripcion = "La aplicación interna muestra un error al iniciar sesión.",
+                        Prioridad = "Media",
+                        Estado = "En Progreso",
+                        FechaCreacion = DateTime.UtcNow.AddDays(-1),
+                        FechaLimite = DateTime.UtcNow.AddHours(8),
+                        UsuarioId = usuarioDemo.Id,
+                        TecnicoAsignadoId = tecnicoDemo.Id,
+                        CategoriaId = software.Id
+                    },
+                    new Ticket
+                    {
+                        Titulo = "Problema de conectividad de red",
+                        Descripcion = "Se perdió la conectividad de red en el área de pruebas.",
+                        Prioridad = "Baja",
+                        Estado = "Resuelto",
+                        FechaCreacion = DateTime.UtcNow.AddDays(-2),
+                        FechaLimite = DateTime.UtcNow.AddDays(-1),
+                        FechaResolucion = DateTime.UtcNow.AddHours(-2),
+                        UsuarioId = usuarioDemo.Id,
+                        TecnicoAsignadoId = tecnicoDemo.Id,
+                        CategoriaId = red.Id
+                    }
+                );
+
+                await SaveChangesAsync();
+            }
         }
 
         private async Task EnsureSeededUser(
