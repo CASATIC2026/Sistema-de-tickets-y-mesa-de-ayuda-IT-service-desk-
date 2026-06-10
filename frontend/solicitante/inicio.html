@@ -132,27 +132,19 @@
     <script src="../js/config.js"></script>
     <script src="../js/funcionBase.js"></script>
     <script>
-        const REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
         const AUTO_REFRESH_MS = 5000;
         let ticketsRefreshInterval = null;
 
-        const nombre = localStorage.getItem("nombre") || sessionStorage.getItem("nombre");
-        if (nombre) {
-            document.getElementById("nombreUsuario").innerText = nombre;
-        }
-
-        function getAuthHeaders() {
-            const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-            return token ? { 'Authorization': `Bearer ${token}` } : {};
+        function updateUIUserInfo() {
+            const u = getCurrentUser();
+            if (u.nombre) document.getElementById("nombreUsuario").innerText = u.nombre;
         }
 
         async function sincronizarSesion() {
-            const response = await fetch(`${window.API_BASE_URL}/api/Auth/me`, { headers: getAuthHeaders() });
-            if (!response.ok) throw new Error('No se pudo validar la sesión');
-            
-            const usuario = await response.json();
-            document.getElementById("nombreUsuario").innerText = usuario.nombre || '';
-            return usuario;
+            const success = await validateSession();
+            if (!success) throw new Error('Sesión inválida');
+            updateUIUserInfo();
+            return getCurrentUser();
         }
 
         function iniciarAutoRefresh() {
@@ -202,7 +194,7 @@
         }
 
         window.addEventListener('storage', event => {
-            if (event.key === REFRESH_EVENT_KEY && event.newValue) cargarTickets();
+            if (event.key === window.REFRESH_EVENT_KEY && event.newValue) cargarTickets();
         });
 
         document.addEventListener('visibilitychange', () => {
@@ -210,6 +202,7 @@
         });
 
         window.onload = function() {
+            updateUIUserInfo();
             sincronizarSesion()
                 .then(() => {
                     cargarTickets();
