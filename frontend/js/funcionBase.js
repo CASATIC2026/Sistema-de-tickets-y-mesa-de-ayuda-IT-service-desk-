@@ -38,6 +38,73 @@ window.fetchWithAuth = async function fetchWithAuth(url, options = {}) {
     });
 };
 
+window.REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
+
+window.notifyDataChanged = function(scope = 'tickets', ticketId = null) {
+    localStorage.setItem(window.REFRESH_EVENT_KEY, JSON.stringify({
+        scope,
+        ticketId,
+        timestamp: Date.now()
+    }));
+};
+
+window.escapeHtml = function(text) {
+    return (text || '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[char]));
+};
+
+window.renderChatMessages = function(containerId, comentarios, usuarioIdActual, miRolActual) {
+    const contenedor = document.getElementById(containerId);
+    if (!contenedor) return;
+
+    const estabaAbajo = contenedor.scrollHeight - contenedor.scrollTop <= contenedor.clientHeight + 60;
+    contenedor.innerHTML = '';
+
+    if (!comentarios || comentarios.length === 0) {
+        contenedor.innerHTML = `<p style="color: #6b7280; text-align: center; padding: 20px;">No hay mensajes aún.</p>`;
+        return;
+    }
+
+    comentarios.forEach(com => {
+        const div = document.createElement('div');
+        div.classList.add('comment');
+        
+        const idDuenoMensaje = Number(com.usuarioId);
+        const esPropio = usuarioIdActual && idDuenoMensaje === usuarioIdActual;
+        const esSoporte = com.usuarioRol === 'Admin' || com.usuarioRol === 'Tecnico';
+        const yoSoySoporte = miRolActual === 'Admin' || miRolActual === 'Tecnico';
+
+        if (esPropio) {
+            div.classList.add('own');
+        } else if (yoSoySoporte && esSoporte) {
+            div.classList.add('own');
+        } else if (esSoporte) {
+            div.classList.add('tecnico');
+        }
+
+        const fechaStr = com.fecha ? new Date(com.fecha).toLocaleString('es-ES') : '';
+        const tagRol = com.usuarioRol ? ` (${com.usuarioRol})` : '';
+
+        div.innerHTML = `
+            <div class="comment-header">
+                <strong>${window.escapeHtml(com.usuarioNombre)}${tagRol}</strong>
+                <span>${fechaStr}</span>
+            </div>
+            <p>${window.escapeHtml(com.mensaje)}</p>
+        `;
+        contenedor.appendChild(div);
+    });
+
+    if (estabaAbajo) {
+        contenedor.scrollTop = contenedor.scrollHeight;
+    }
+};
+
 function isAuthenticated() {
     const t = getToken();
     const u = getCurrentUser();
