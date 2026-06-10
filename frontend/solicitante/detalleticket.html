@@ -361,23 +361,16 @@
     <script src="../js/config.js"></script>
     <script src="../js/funcionBase.js"></script>
     <script>
-       // Reutilizamos la variable global de configuración
-API_BASE_URL = window.API_BASE_URL; 
 
-// Obtener el ID del ticket desde la URL
 const urlParams = new URLSearchParams(window.location.search);
 const ticketId = urlParams.get('id');
 
-// Variable global para controlar el intervalo de actualización automática
 let chatInterval = null;
 
-// ======================================================
-// SINCRONIZAR SESIÓN (PROMETIDA)
-// ======================================================
 async function sincronizarSesion() {
     try {
         const token = localStorage.getItem('token');
-        if (!token) return false; // No hay token, no podemos sincronizar
+        if (!token) return false; 
 
         const response = await fetch(`${API_BASE_URL}/api/Auth/me`, {
             headers: { 'Authorization': `Bearer ${token}` }
@@ -398,9 +391,6 @@ async function sincronizarSesion() {
     }
 }
 
-// ======================================================
-// CARGAR LOS DATOS DEL TICKET GENERAL
-// ======================================================
 async function cargarDetalleTicket() {
     if (!ticketId) {
         alert("No se especificó ningún ID de ticket.");
@@ -410,7 +400,6 @@ async function cargarDetalleTicket() {
 
     const token = localStorage.getItem('token');
     if (!token) {
-        // SEGURIDAD: Si no hay token (porque cerraron sesión), detenemos todo y redirigimos
         detenerTiempoReal();
         window.location.href = "login.html";
         return;
@@ -421,7 +410,6 @@ async function cargarDetalleTicket() {
             headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        // Si el servidor devuelve 401 (No autorizado) o 403 (Prohibido) porque expiró la sesión
         if (response.status === 401 || response.status === 403) {
             detenerTiempoReal();
             window.location.href = "login.html";
@@ -432,7 +420,6 @@ async function cargarDetalleTicket() {
 
         const ticket = await response.json();
 
-        // Inyectar datos generales en el HTML con validación de existencia
         if(document.getElementById('ticketId')) document.getElementById('ticketId').textContent = ticket.id;
         if(document.getElementById('ticketTitulo')) document.getElementById('ticketTitulo').textContent = ticket.titulo;
         if(document.getElementById('ticketEstado')) document.getElementById('ticketEstado').textContent = ticket.estado || 'Abierto';
@@ -443,7 +430,6 @@ async function cargarDetalleTicket() {
         if(document.getElementById('ticketCategoria')) document.getElementById('ticketCategoria').textContent = ticket.categoriaNombre || 'General';
         if(document.getElementById('ticketDescripcion')) document.getElementById('ticketDescripcion').textContent = ticket.descripcion;
 
-        // Renderizar el Chat
         renderizarChat(ticket.comentarios || []);
 
     } catch (error) {
@@ -453,14 +439,10 @@ async function cargarDetalleTicket() {
     }
 }
 
-// ======================================================
-// ACTUALIZAR ÚNICAMENTE EL CHAT (Tiempo Real Seguro)
-// ======================================================
 async function actualizarSoloChat() {
     if (!ticketId) return;
     const token = localStorage.getItem('token');
     
-    // Si se cerró la sesión en otra pestaña, detenemos el bucle para evitar errores 401 masivos
     if (!token) {
         detenerTiempoReal();
         return;
@@ -485,14 +467,10 @@ async function actualizarSoloChat() {
     }
 }
 
-// ======================================================
-// DIBUJAR LOS MENSAJES (MÁXIMA SEGURIDAD DE ROLES)
-// ======================================================
 function renderizarChat(comentarios) {
     const contenedor = document.getElementById('comentariosList');
     const statusChat = document.getElementById('chatStatus');
     
-    // Leemos los datos actuales de la sesión de manera segura
     const usuarioIdActual = localStorage.getItem('usuarioId') ? Number(localStorage.getItem('usuarioId')) : null;
     const miRolActual = localStorage.getItem('rol'); 
 
@@ -515,21 +493,17 @@ function renderizarChat(comentarios) {
 
         const idDuenoMensaje = Number(com.usuarioId);
 
-        // REGLA TRIPLE DE ASIGNACIÓN DE LADO:
-        // 1. Si el ID del dueño del mensaje coincide con mi ID actual de sesión => DERECHA
         if (usuarioIdActual && idDuenoMensaje === usuarioIdActual) {
             div.classList.add('own');
         } 
-        // 2. Si yo soy Admin/Técnico y el mensaje lo escribió otro Admin/Técnico => DERECHA (Equipo de soporte agrupado)
         else if ((miRolActual === 'Admin' || miRolActual === 'Tecnico') && (com.usuarioRol === 'Admin' || com.usuarioRol === 'Tecnico')) {
             div.classList.add('own');
         }
-        // 3. En cualquier otro caso => IZQUIERDA (El bando contrario)
         else {
             if (com.usuarioRol === 'Admin' || com.usuarioRol === 'Tecnico') {
-                div.classList.add('tecnico'); // Estilo izquierdo para técnico
+                div.classList.add('tecnico'); 
             } else {
-                div.classList.add('solicitante'); // Estilo izquierdo para cliente
+                div.classList.add('solicitante'); 
             }
         }
 
@@ -551,9 +525,6 @@ function renderizarChat(comentarios) {
     }
 }
 
-// ======================================================
-// ENVIAR UN NUEVO MENSAJE AL CHAT
-// ======================================================
 async function enviarComentario() {
     const inputMensaje = document.getElementById("nuevoComentario"); 
     const mensajeTexto = inputMensaje.value.trim();
@@ -603,17 +574,11 @@ function detenerTiempoReal() {
     }
 }
 
-// ======================================================
-// INICIALIZACIÓN SECUENCIAL (Aquí está el truco de la estabilidad)
-// ======================================================
 window.onload = async function() {
-    // 1. Primero esperamos obligatoriamente a que la sesión esté sincronizada en LocalStorage
     await sincronizarSesion();
-    
-    // 2. Una vez que ya sabemos con certeza quiénes somos, cargamos el ticket
+
     await cargarDetalleTicket();
     
-    // 3. Activamos el tiempo real de manera limpia
     detenerTiempoReal();
     chatInterval = setInterval(actualizarSoloChat, 3000);
 };
