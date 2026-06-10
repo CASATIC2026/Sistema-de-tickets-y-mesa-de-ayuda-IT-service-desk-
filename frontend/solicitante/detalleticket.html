@@ -361,35 +361,10 @@
     <script src="../js/config.js"></script>
     <script src="../js/funcionBase.js"></script>
     <script>
-
 const urlParams = new URLSearchParams(window.location.search);
 const ticketId = urlParams.get('id');
 
 let chatInterval = null;
-
-async function sincronizarSesion() {
-    try {
-        const token = localStorage.getItem('token');
-        if (!token) return false; 
-
-        const response = await fetch(`${API_BASE_URL}/api/Auth/me`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (response.ok) {
-            const usuario = await response.json();
-            localStorage.setItem('usuarioId', usuario.id);
-            localStorage.setItem('rol', usuario.role || usuario.rol);
-            localStorage.setItem('nombre', usuario.nombre);
-            localStorage.setItem('correo', usuario.correo);
-            return true;
-        }
-        return false;
-    } catch (error) {
-        console.error('Error en sincronizarSesion:', error);
-        return false;
-    }
-}
 
 async function cargarDetalleTicket() {
     if (!ticketId) {
@@ -397,9 +372,8 @@ async function cargarDetalleTicket() {
         window.location.href = "inicio.html";
         return;
     }
-
-    const token = localStorage.getItem('token');
-    if (!token) {
+    
+    if (!getToken()) { // Use global getToken
         detenerTiempoReal();
         window.location.href = "login.html";
         return;
@@ -407,9 +381,8 @@ async function cargarDetalleTicket() {
 
     try {
         const response = await fetch(`${API_BASE_URL}/api/Tickets/${ticketId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: getAuthHeaders() // Use global getAuthHeaders
         });
-
         if (response.status === 401 || response.status === 403) {
             detenerTiempoReal();
             window.location.href = "login.html";
@@ -426,7 +399,7 @@ async function cargarDetalleTicket() {
         if(document.getElementById('ticketPrioridad')) document.getElementById('ticketPrioridad').textContent = ticket.prioridad || 'Baja';
         if(document.getElementById('ticketSla')) document.getElementById('ticketSla').textContent = ticket.slaStatus || 'N/A';
         if(document.getElementById('ticketFecha')) document.getElementById('ticketFecha').textContent = ticket.fechaCreacion ? new Date(ticket.fechaCreacion).toLocaleDateString() : '-';
-        if(document.getElementById('ticketTecnico')) document.getElementById('ticketTecnico').textContent = ticket.tecnicoNombre || 'Sin asignar';
+        if(document.getElementById('ticketTecnico')) document.getElementById('ticketTecnico').textContent = window.escapeHtml(ticket.tecnicoNombre || 'Sin asignar');
         if(document.getElementById('ticketCategoria')) document.getElementById('ticketCategoria').textContent = ticket.categoriaNombre || 'General';
         if(document.getElementById('ticketDescripcion')) document.getElementById('ticketDescripcion').textContent = ticket.descripcion;
 
@@ -441,9 +414,8 @@ async function cargarDetalleTicket() {
 
 async function actualizarSoloChat() {
     if (!ticketId) return;
-    const token = localStorage.getItem('token');
     
-    if (!token) {
+    if (!getToken()) { // Use global getToken
         detenerTiempoReal();
         return;
     }
@@ -451,7 +423,7 @@ async function actualizarSoloChat() {
     try {
         const response = await fetch(`${API_BASE_URL}/api/Comentarios/ticket/${ticketId}`, {
             headers: { 'Authorization': `Bearer ${token}` }
-        });
+        }); // This fetch should use fetchWithAuth
 
         if (response.status === 401) {
             detenerTiempoReal();
@@ -460,79 +432,24 @@ async function actualizarSoloChat() {
 
         if (response.ok) {
             const comentarios = await response.json();
-            renderizarChat(comentarios);
+            const u = getCurrentUser();
+            window.renderChatMessages('comentariosList', comentarios, u.id, u.rol);
+            document.getElementById('chatStatus').textContent = comentarios.length > 0 ? 'Conversación activa' : 'Sin mensajes todavía';
+            document.getElementById('chatUpdatedAt').textContent = `Actualizado ${new Date().toLocaleTimeString()}`;
         }
     } catch (error) {
         console.error("Error en la actualización automática del chat:", error);
-    }
-}
-
-function renderizarChat(comentarios) {
-    const contenedor = document.getElementById('comentariosList');
-    const statusChat = document.getElementById('chatStatus');
-    
-    const usuarioIdActual = localStorage.getItem('usuarioId') ? Number(localStorage.getItem('usuarioId')) : null;
-    const miRolActual = localStorage.getItem('rol'); 
-
-    if (!contenedor) return;
-
-    const estabaAbajo = contenedor.scrollHeight - contenedor.scrollTop <= contenedor.clientHeight + 60;
-    contenedor.innerHTML = '';
-
-    if (!comentarios || comentarios.length === 0) {
-        contenedor.innerHTML = `<p class="empty-comments">No hay mensajes en este ticket aún.</p>`;
-        if(statusChat) statusChat.textContent = "Conversación vacía";
-        return;
-    }
-
-    if(statusChat) statusChat.textContent = `${comentarios.length} mensaje(s)`;
-    
-    comentarios.forEach(com => {
-        const div = document.createElement('div');
-        div.classList.add('comment');
-
-        const idDuenoMensaje = Number(com.usuarioId);
-
-        if (usuarioIdActual && idDuenoMensaje === usuarioIdActual) {
-            div.classList.add('own');
-        } 
-        else if ((miRolActual === 'Admin' || miRolActual === 'Tecnico') && (com.usuarioRol === 'Admin' || com.usuarioRol === 'Tecnico')) {
-            div.classList.add('own');
-        }
-        else {
-            if (com.usuarioRol === 'Admin' || com.usuarioRol === 'Tecnico') {
-                div.classList.add('tecnico'); 
-            } else {
-                div.classList.add('solicitante'); 
-            }
-        }
-
-        const fechaStr = com.fecha ? new Date(com.fecha).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
-        const tagRol = com.usuarioRol ? ` (${com.usuarioRol})` : '';
-
-        div.innerHTML = `
-            <div class="comment-header">
-                <strong>${com.usuarioNombre || 'Usuario'}<small style="opacity: 0.75; font-weight: normal;">${tagRol}</small></strong>
-                <span>${fechaStr}</span>
-            </div>
-            <p>${com.mensaje}</p>
-        `;
-        contenedor.appendChild(div);
-    });
-
-    if (estabaAbajo) {
-        contenedor.scrollTop = contenedor.scrollHeight;
+        const statusChat = document.getElementById('chatStatus');
+        if(statusChat) statusChat.textContent = "Error al cargar la conversación.";
     }
 }
 
 async function enviarComentario() {
     const inputMensaje = document.getElementById("nuevoComentario"); 
     const mensajeTexto = inputMensaje.value.trim();
-
     if (!mensajeTexto) return;
-
-    const token = localStorage.getItem('token');
-    if (!token) {
+    
+    if (!getToken()) { // Use global getToken
         alert("Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.");
         window.location.href = "login.html";
         return;
@@ -544,12 +461,8 @@ async function enviarComentario() {
     };
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/Comentarios`, {
+        const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Comentarios`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
             body: JSON.stringify(payload)
         });
 
@@ -575,7 +488,7 @@ function detenerTiempoReal() {
 }
 
 window.onload = async function() {
-    await sincronizarSesion();
+    await validateSession(); // Use global validateSession
 
     await cargarDetalleTicket();
     

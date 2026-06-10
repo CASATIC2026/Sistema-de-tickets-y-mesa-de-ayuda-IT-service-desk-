@@ -236,7 +236,7 @@
             }
 
             try {
-                const response = await fetch(`${apiBaseUrl}/api/Auth/register`, {
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Auth/register`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -255,15 +255,10 @@
                 }
 
                 // Guardar datos y redirigir
-                localStorage.clear();
-                localStorage.setItem("token", data.token);
-
-                const usuario = await obtenerSesionActual(data.token);
-
-                localStorage.setItem("usuarioId", usuario.id);
-                localStorage.setItem("rol", usuario.rol);
-                localStorage.setItem("nombre", usuario.nombre);
-                localStorage.setItem("correo", usuario.correo);
+                setToken(data.token, data.expiration); // Assuming data.expiration is returned
+                if (!(await validateSession())) { // Validate session and populate user info
+                    throw new Error("Datos de sesión inválidos después del registro.");
+                }
 
                 successDiv.textContent = "¡Registro exitoso! Redirigiendo...";
                 successDiv.style.display = 'block';

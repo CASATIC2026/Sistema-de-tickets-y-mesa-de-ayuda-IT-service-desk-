@@ -219,35 +219,17 @@
     <script src="../js/config.js"></script>
 <script src="../js/funcionBase.js"></script>
 <script>
-        const REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
-
-        function notifyDataChanged(scope = 'tickets', ticketId = null) {
-            localStorage.setItem(REFRESH_EVENT_KEY, JSON.stringify({
-                scope,
-                ticketId,
-                timestamp: Date.now()
-            }));
+        function updateUIUserInfo() {
+            const u = getCurrentUser();
+            document.getElementById('nombre').value = u.nombre || '';
+            document.getElementById('correo').value = u.correo || '';
         }
 
-        async function sincronizarSesion() {
-            const token = localStorage.getItem('token');
-            const response = await fetch(`${API_BASE_URL}/api/Auth/me`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('No se pudo validar la sesión');
-            }
-
-            const usuario = await response.json();
-            localStorage.setItem('usuarioId', usuario.id);
-            localStorage.setItem('rol', usuario.rol);
-            localStorage.setItem('nombre', usuario.nombre);
-            localStorage.setItem('correo', usuario.correo);
-            document.getElementById('nombre').value = usuario.nombre || '';
-            document.getElementById('correo').value = usuario.correo || '';
+        async function sincronizarSesionYUI() {
+            const success = await validateSession();
+            if (!success) throw new Error('Sesión inválida');
+            updateUIUserInfo();
+            return getCurrentUser();
         }
 
         // Cargar datos del usuario
@@ -255,7 +237,7 @@
         document.getElementById('correo').value = localStorage.getItem('correo') || '';
 
         // Cargar categorías
-        async function cargarCategorias() {
+        async function cargarCategorias() { // This function doesn't need auth headers, as categories are public.
             try {
                 const response = await fetch(`${API_BASE_URL}/api/Categorias`);
                 const categorias = await response.json();
@@ -280,11 +262,10 @@
             errorDiv.style.display = 'none';
             successDiv.style.display = 'none';
 
-            const usuarioId = localStorage.getItem("usuarioId");
-            const token = localStorage.getItem("token");
+            const currentUser = getCurrentUser();
 
-            if (!usuarioId) {
-                errorDiv.textContent = "Usuario no identificado. Por favor, inicia sesión.";
+            if (!currentUser.id) {
+                errorDiv.textContent = "Usuario no identificado. Por favor, inicia sesión o recarga la página.";
                 errorDiv.style.display = 'block';
                 return;
             }
@@ -302,16 +283,8 @@
 };
 
 try {
-    const headers = {
-        "Content-Type": "application/json"
-    };
-    
-    // El token es vital para que el backend extraiga el UsuarioId de los Claims
-    if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${API_BASE_URL}/api/Tickets`, {
+    // Use fetchWithAuth which automatically adds headers
+    const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(ticket)
@@ -330,7 +303,7 @@ try {
     }
 
     // Si todo salió bien
-    notifyDataChanged('ticket-created', data.id || null);
+    window.notifyDataChanged('ticket-created', data.id || null);
     successDiv.textContent = "¡Ticket creado correctamente! Redirigiendo...";
     successDiv.style.display = 'block';
 
@@ -347,7 +320,7 @@ try {
 
         window.onload = async function() {
             try {
-                await sincronizarSesion();
+                await sincronizarSesionYUI();
                 await cargarCategorias();
             } catch (error) {
                 window.location.href = 'Login.html';

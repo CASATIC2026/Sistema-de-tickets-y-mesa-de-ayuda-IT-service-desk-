@@ -629,66 +629,16 @@
     <script src="../js/config.js"></script>
 <script src="../js/funcionBase.js"></script>
 <script>
-        const AUTO_REFRESH_MS = 5000;
+        const AUTO_REFRESH_MS = 5000; // This can also be moved to funcionBase.js if consistent across pages
         let ticketActual = null;
         let comentariosInterval = null;
         let tecnicosDisponibles = [];
         let ticketsRefreshInterval = null;
 
         document.getElementById('nombreUsuario').textContent = getCurrentUser().nombre;
-
-async function cargarTickets() {
-    try {
-        const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets`);
-
-        if (!response.ok) {
-            throw new Error('No se pudieron cargar los tickets');
-        }
-
-        const tickets = await response.json();
-        const tabla = document.getElementById('tablaTickets');
-
-        // Stats (Tu lógica original intacta)
-        document.getElementById('totalTickets').textContent = tickets.length;
-        document.getElementById('ticketsAbiertos').textContent = tickets.filter(t => t.estado === 'Abierto').length;
-        document.getElementById('ticketsProgreso').textContent = tickets.filter(t => t.estado === 'En Progreso').length;
-        document.getElementById('ticketsResueltos').textContent = tickets.filter(t => t.estado === 'Resuelto' || t.estado === 'Cerrado').length;
-        document.getElementById('slaVencidos').textContent = tickets.filter(t => t.slaStatus === 'Vencido').length;
-
-        if (tickets.length === 0) {
-            tabla.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">No hay tickets</td></tr>';
-            return;
-        }
-
-        tabla.innerHTML = '';
-        tickets.forEach(t => {
-            const fecha = new Date(t.fechaCreacion).toLocaleDateString('es-ES');
-            tabla.innerHTML += `
-                <tr>
-                    <td data-label="ID">${t.id}</td>
-                    <td data-label="Título">${t.titulo}</td>
-                    <td data-label="Usuario">${t.usuarioNombre || 'N/A'}</td>
-                    <td data-label="Prioridad"><span class="badge ${getPriorityClass(t.prioridad)}">${t.prioridad || 'Media'}</span></td>
-                    <td data-label="Estado"><span class="badge ${getStatusClass(t.estado)}">${t.estado || 'Abierto'}</span></td>
-                    <td data-label="SLA"><span class="badge ${getSlaClass(t.slaStatus)}">${t.slaStatus || 'Sin SLA'}</span></td>
-                    <td data-label="Fecha">${fecha}</td>
-                    <td data-label="Acciones">
-                        <div class="btn-group">
-                            <button class="btn btn-primary" onclick="verDetalle(${t.id})">Ver</button>
-                        </div>
-                    </td>
-                </tr>`;
-        });
-    } catch (error) {
-        console.error('Error en cargarTickets:', error);
-    }
-}
-
         async function verDetalle(id) {
             try {
-                const response = await fetch(`${window.API_BASE_URL}/api/Tickets/${id}`, {
-                    headers: getAuthHeaders()
-                });
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets/${id}`);
 
                 if (!response.ok) {
                     throw new Error('No se pudo cargar el ticket');
@@ -704,7 +654,7 @@ async function cargarTickets() {
                 document.getElementById('modal-prioridad').textContent = ticket.prioridad || 'Media';
                 document.getElementById('modal-sla').textContent = ticket.slaStatus || 'Sin SLA';
                 document.getElementById('modal-tecnico').textContent = ticket.tecnicoNombre || 'Sin asignar';
-                document.getElementById('modal-descripcion').textContent = ticket.descripcion;
+                document.getElementById('modal-descripcion').textContent = window.escapeHtml(ticket.descripcion);
                 configurarAccionesDeAsignacion(ticket);
 
                 document.getElementById('ticketModal').style.display = 'block';
@@ -729,16 +679,15 @@ async function cargarTickets() {
             if (!ticketActual) return;
 
             try {
-                const response = await fetch(`${window.API_BASE_URL}/api/Comentarios/ticket/${ticketActual.id}`, {
-                    headers: getAuthHeaders()
-                });
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Comentarios/ticket/${ticketActual.id}`);
 
                 if (!response.ok) {
                     throw new Error('No se pudo cargar la conversación');
                 }
 
                 const comentarios = await response.json();
-                renderComentarios(comentarios);
+                const u = getCurrentUser();
+                window.renderChatMessages('comentariosList', comentarios, u.id, u.rol);
                 document.getElementById('chatStatus').textContent = comentarios.length > 0 ? 'Conversación activa' : 'Sin mensajes todavía';
                 document.getElementById('chatUpdatedAt').textContent = `Actualizado ${new Date().toLocaleTimeString()}`;
             } catch (error) {
@@ -747,15 +696,13 @@ async function cargarTickets() {
             }
         }
 
-        function esAdmin() { return getCurrentUser().rol === 'Admin'; }
+        function esAdmin() { return getCurrentUser().rol === 'Admin'; } // Use global esAdmin
 
         async function cargarTecnicosDisponibles() {
             if (!esAdmin()) return;
 
             try {
-                const response = await fetch(`${window.API_BASE_URL}/api/Auth/tecnicos`, {
-                    headers: getAuthHeaders()
-                });
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Auth/tecnicos`);
 
                 if (!response.ok) {
                     throw new Error('No se pudieron cargar los técnicos');
@@ -793,11 +740,6 @@ async function cargarTickets() {
             });
         }
 
-        function renderComentarios(comentarios) {
-            const u = getCurrentUser();
-            window.renderChatMessages('comentariosList', comentarios, u.id, u.rol);
-        }
-
         function iniciarAutoRefreshComentarios() {
             if (comentariosInterval) {
                 clearInterval(comentariosInterval);
@@ -822,6 +764,55 @@ async function cargarTickets() {
             }, AUTO_REFRESH_MS);
         }
 
+        async function cargarTickets() {
+            try {
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets`);
+
+                if (!response.ok) {
+                    throw new Error('No se pudieron cargar los tickets');
+                }
+
+                const tickets = await response.json();
+                const tabla = document.getElementById('tablaTickets');
+
+                // Stats (Tu lógica original intacta)
+                document.getElementById('totalTickets').textContent = tickets.length;
+                document.getElementById('ticketsAbiertos').textContent = tickets.filter(t => t.estado === 'Abierto').length;
+                document.getElementById('ticketsProgreso').textContent = tickets.filter(t => t.estado === 'En Progreso').length;
+                document.getElementById('ticketsResueltos').textContent = tickets.filter(t => t.estado === 'Resuelto' || t.estado === 'Cerrado').length;
+                document.getElementById('slaVencidos').textContent = tickets.filter(t => t.slaStatus === 'Vencido').length;
+
+                if (tickets.length === 0) {
+                    tabla.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">No hay tickets</td></tr>';
+                    return;
+                }
+
+                tabla.innerHTML = '';
+                tickets.forEach(t => {
+                    const fecha = new Date(t.fechaCreacion).toLocaleDateString('es-ES');
+                    tabla.innerHTML += `
+                        <tr>
+                            <td data-label="ID">${window.escapeHtml(t.id)}</td>
+                            <td data-label="Título">${window.escapeHtml(t.titulo)}</td>
+                            <td data-label="Usuario">${window.escapeHtml(t.usuarioNombre || 'N/A')}</td>
+                            <td data-label="Prioridad"><span class="badge ${getPriorityClass(t.prioridad)}">${t.prioridad || 'Media'}</span></td>
+                            <td data-label="Estado"><span class="badge ${getStatusClass(t.estado)}">${t.estado || 'Abierto'}</span></td>
+                            <td data-label="SLA"><span class="badge ${getSlaClass(t.slaStatus)}">${t.slaStatus || 'Sin SLA'}</span></td>
+                            <td data-label="Fecha">${fecha}</td>
+                            <td data-label="Acciones">
+                                <div class="btn-group">
+                                    <button class="btn btn-primary" onclick="verDetalle(${t.id})">Ver</button>
+                                </div>
+                            </td>
+                        </tr>`;
+                });
+            } catch (error) {
+                console.error('Error en cargarTickets:', error);
+                const tabla = document.getElementById('tablaTickets');
+                tabla.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: red;">Error al cargar tickets.</td></tr>';
+            }
+        }
+
         async function actualizarEstado() {
             if (!ticketActual) return;
             const estado = document.getElementById('cambiarEstado').value;
@@ -831,7 +822,7 @@ async function cargarTickets() {
             }
 
             try {
-                // Cambiado a fetchWithAuth para consistencia global
+                // Use fetchWithAuth for consistency
             const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets/${ticketActual.id}/estado`, {
                     method: 'PUT',
                     body: JSON.stringify({ estado: estado })
@@ -839,7 +830,7 @@ async function cargarTickets() {
 
                 if (response.ok) {
                     alert('Estado actualizado');
-                    notifyDataChanged('ticket-status-updated', ticketActual.id);
+                    window.notifyDataChanged('ticket-status-updated', ticketActual.id);
                     cerrarModal();
                     cargarTickets();
                 } else {
@@ -861,14 +852,14 @@ async function cargarTickets() {
             }
 
             try {
-            const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets/${ticketActual.id}/asignar`, {
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets/${ticketActual.id}/asignar`, {
                     method: 'PUT',
                     body: JSON.stringify({ tecnicoId: parseInt(tecnicoId, 10) })
                 });
 
                 if (response.ok) {
                     alert('Ticket asignado correctamente');
-                    notifyDataChanged('ticket-assigned', ticketActual.id);
+                    window.notifyDataChanged('ticket-assigned', ticketActual.id);
                     cerrarModal();
                     cargarTickets();
                 } else {
@@ -891,7 +882,7 @@ async function cargarTickets() {
 
             try {
                 boton.disabled = true;
-            const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Comentarios`, {
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Comentarios`, {
                     method: 'POST',
                     body: JSON.stringify({
                         ticketId: ticketActual.id,
@@ -901,8 +892,8 @@ async function cargarTickets() {
 
                 if (response.ok) {
                     document.getElementById('nuevoComentario').value = '';
-                    await cargarComentarios();
-                    notifyDataChanged('comment', ticketActual.id);
+                    await cargarComentarios(); // Reload comments for the current ticket
+                    window.notifyDataChanged('comment', ticketActual.id); // Notify other tabs
                 } else {
                     const data = await response.json();
                     alert(data.message || 'Error al enviar comentario');

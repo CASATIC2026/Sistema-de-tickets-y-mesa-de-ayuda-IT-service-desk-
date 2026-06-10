@@ -132,20 +132,10 @@
     <script src="../js/config.js"></script>
     <script src="../js/funcionBase.js"></script>
     <script>
-        const AUTO_REFRESH_MS = 5000;
+        const AUTO_REFRESH_MS = 5000; // Can be moved to funcionBase.js if common
         let ticketsRefreshInterval = null;
 
-        function updateUIUserInfo() {
-            const u = getCurrentUser();
-            if (u.nombre) document.getElementById("nombreUsuario").innerText = u.nombre;
-        }
-
-        async function sincronizarSesion() {
-            const success = await validateSession();
-            if (!success) throw new Error('Sesión inválida');
-            updateUIUserInfo();
-            return getCurrentUser();
-        }
+        document.getElementById('nombreUsuario').textContent = getCurrentUser().nombre;
 
         function iniciarAutoRefresh() {
             if (ticketsRefreshInterval) clearInterval(ticketsRefreshInterval);
@@ -157,7 +147,7 @@
         async function cargarTickets() {
             const tabla = document.getElementById("tablaTickets");
             try {
-                const response = await fetch(`${window.API_BASE_URL}/api/Tickets/mis-tickets`, { headers: getAuthHeaders() });
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets/mis-tickets`);
                 if (!response.ok) throw new Error('Error en la petición');
 
                 const tickets = await response.json();
@@ -171,10 +161,10 @@
                     const fecha = new Date(ticket.fechaCreacion).toLocaleDateString('es-ES');
                     tabla.innerHTML += `
                         <tr>
-                            <td>${ticket.id}</td>
-                            <td>${ticket.titulo}</td>
+                            <td>${window.escapeHtml(ticket.id)}</td>
+                            <td>${window.escapeHtml(ticket.titulo)}</td>
                             <td><span class="status-badge ${getStatusClass(ticket.estado)}">${ticket.estado || 'Abierto'}</span></td>
-                            <td><span class="${getPriorityClass(ticket.prioridad)}">${ticket.prioridad || 'Media'}</span></td>
+                            <td><span class="${getPriorityClass(ticket.prioridad)}">${window.escapeHtml(ticket.prioridad || 'Media')}</span></td>
                             <td><span class="${getSlaClass(ticket.slaStatus)}">${ticket.slaStatus || 'Sin SLA'}</span></td>
                             <td>${fecha}</td>
                             <td>
@@ -194,21 +184,19 @@
         }
 
         window.addEventListener('storage', event => {
-            if (event.key === window.REFRESH_EVENT_KEY && event.newValue) cargarTickets();
+            if (event.key === window.REFRESH_EVENT_KEY && event.newValue) {
+                cargarTickets();
+            }
         });
 
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) cargarTickets();
         });
 
-        window.onload = function() {
-            updateUIUserInfo();
-            sincronizarSesion()
-                .then(() => {
-                    cargarTickets();
-                    iniciarAutoRefresh();
-                })
-                .catch(() => logout());
+        window.onload = async function() {
+            await validateSession(); // Validate session on load
+            cargarTickets();
+            iniciarAutoRefresh();
         };
     </script>
 </body>

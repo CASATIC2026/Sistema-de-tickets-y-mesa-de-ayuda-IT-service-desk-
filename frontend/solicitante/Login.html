@@ -242,25 +242,6 @@
 
 <script>let selectedTokenExpiration = 2;
 
-    // ======================================================
-    // VALIDAR SESIÓN REAL DESDE BACKEND
-    // ======================================================
-    async function obtenerSesionActual(token) {
-        const response = await fetch(`${API_BASE_URL}/api/Auth/me`, {
-            method: "GET",
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('No se pudo validar la sesión');
-        }
-
-        return await response.json();
-    }
-
 
     // ======================================================
     // BOTONES DE DURACIÓN DE TOKEN
@@ -310,7 +291,7 @@
                 // ======================================================
                 // LOGIN INICIAL
                 // ======================================================
-                const response = await fetch(`${API_BASE_URL}/api/Auth/login`, {
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Auth/login`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -334,27 +315,12 @@
                     throw new Error("No se recibió token válido");
                 }
 
-                localStorage.setItem("token", data.token);
-                sessionStorage.setItem("token", data.token);
+                // Store token and expiration using the global helper
+                setToken(data.token, data.expiration);
 
-                localStorage.setItem("tokenExpiration", data.expiration);
-                sessionStorage.setItem("tokenExpiration", data.expiration);
-
-                const usuario = await obtenerSesionActual(data.token);
-
-                if (!usuario || !usuario.id || !usuario.rol) {
+                if (!(await validateSession())) { // Validate session and populate user info
                     throw new Error("Datos de sesión inválidos");
                 }
-
-                localStorage.setItem("usuarioId", usuario.id);
-                localStorage.setItem("rol", usuario.rol);
-                localStorage.setItem("nombre", usuario.nombre || "");
-                localStorage.setItem("correo", usuario.correo || "");
-
-                sessionStorage.setItem("usuarioId", usuario.id);
-                sessionStorage.setItem("rol", usuario.rol);
-                sessionStorage.setItem("nombre", usuario.nombre || "");
-                sessionStorage.setItem("correo", usuario.correo || "");
 
                 window.redireccionEnProceso = false; 
                 console.log("Sesión validada e iniciada de manera inmediata para:", usuario.rol);

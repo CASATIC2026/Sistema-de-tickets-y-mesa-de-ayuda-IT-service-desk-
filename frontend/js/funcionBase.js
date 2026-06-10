@@ -8,6 +8,11 @@ function getToken() {
     return localStorage.getItem('token') || sessionStorage.getItem('token') || null;
 }
 
+function setToken(token, expiration) {
+    localStorage.setItem('token', token);
+    sessionStorage.setItem('token', token);
+}
+
 function getCurrentUser() {
     return {
         id: parseInt(localStorage.getItem('usuarioId') || sessionStorage.getItem('usuarioId') || '0', 10),
@@ -110,6 +115,10 @@ function isAuthenticated() {
     const u = getCurrentUser();
     return !!(t && u.id > 0 && u.rol && u.nombre);
 }
+
+window.esAdmin = function() {
+    return getCurrentUser().rol === 'Admin';
+};
 
 async function validateSession() {
     const token = getToken();

@@ -666,10 +666,10 @@
                 tickets.forEach(t => {
                     const fecha = new Date(t.fechaCreacion).toLocaleDateString('es-ES');
                     tabla.innerHTML += `
-                        <tr>
-                            <td data-label="ID">${t.id}</td>
-                            <td data-label="Título">${t.titulo}</td>
-                            <td data-label="Usuario">${t.usuarioNombre || 'N/A'}</td>
+                        <tr onclick="verDetalle(${t.id})" style="cursor: pointer;">
+                            <td data-label="ID">${window.escapeHtml(t.id)}</td>
+                            <td data-label="Título">${window.escapeHtml(t.titulo)}</td>
+                            <td data-label="Usuario">${window.escapeHtml(t.usuarioNombre || 'N/A')}</td>
                             <td data-label="Prioridad"><span class="badge ${getPriorityClass(t.prioridad)}">${t.prioridad || 'Media'}</span></td>
                             <td data-label="Estado"><span class="badge ${getStatusClass(t.estado)}">${t.estado || 'Abierto'}</span></td>
                             <td data-label="SLA"><span class="badge ${getSlaClass(t.slaStatus)}">${t.slaStatus || 'Sin SLA'}</span></td>
@@ -688,9 +688,7 @@
 
         async function verDetalle(id) {
             try {
-                const response = await fetch(`${window.API_BASE_URL}/api/Tickets/${id}`, {
-                    headers: getAuthHeaders()
-                });
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets/${id}`);
 
                 if (!response.ok) {
                     throw new Error('No se pudo cargar el ticket');
@@ -706,7 +704,7 @@
                 document.getElementById('modal-prioridad').textContent = ticket.prioridad || 'Media';
                 document.getElementById('modal-sla').textContent = ticket.slaStatus || 'Sin SLA';
                 document.getElementById('modal-tecnico').textContent = ticket.tecnicoNombre || 'Sin asignar';
-                document.getElementById('modal-descripcion').textContent = ticket.descripcion;
+                document.getElementById('modal-descripcion').textContent = window.escapeHtml(ticket.descripcion);
                 configurarAccionesDeAsignacion(ticket);
 
                 document.getElementById('ticketModal').style.display = 'block';
@@ -731,31 +729,30 @@
             if (!ticketActual) return;
 
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Comentarios/ticket/${ticketActual.id}`, {
-                    headers: getAuthHeaders()
-                });
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Comentarios/ticket/${ticketActual.id}`);
 
                 if (!response.ok) {
                     throw new Error('No se pudo cargar la conversación');
                 }
 
                 const comentarios = await response.json();
-                renderComentarios(comentarios);
-                actualizarEstadoChat(comentarios.length > 0 ? 'Conversación activa' : 'Sin mensajes todavía');
+                const u = getCurrentUser();
+                window.renderChatMessages('comentariosList', comentarios, u.id, u.rol);
+                document.getElementById('chatStatus').textContent = comentarios.length > 0 ? 'Conversación activa' : 'Sin mensajes todavía';
+                document.getElementById('chatUpdatedAt').textContent = `Actualizado ${new Date().toLocaleTimeString()}`;
             } catch (error) {
                 console.error(error);
                 document.getElementById('comentariosList').innerHTML = '<p style="color: #6b7280; text-align: center;">No fue posible cargar el chat.</p>';
-                actualizarEstadoChat('Chat no disponible');
             }
         }
 
-        async function cargarTecnicosDisponibles() {
-            if (!esAdmin()) return;
+        function esAdmin() { return getCurrentUser().rol === 'Admin'; } // Use global esAdmin
+
+        async function cargarTecnicosDisponibles() { // This function is fine as is, but should use fetchWithAuth
+            if (!esAdmin()) return; // Use global esAdmin
 
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Auth/tecnicos`, {
-                    headers: getAuthHeaders()
-                });
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Auth/tecnicos`);
 
                 if (!response.ok) {
                     throw new Error('No se pudieron cargar los técnicos');
@@ -793,28 +790,6 @@
             });
         }
 
-        function renderComentarios(comentarios) {
-            const comentariosDiv = document.getElementById('comentariosList');
-            const usuarioId = parseInt(localStorage.getItem('usuarioId') || '0', 10);
-
-            if (!comentarios || comentarios.length === 0) {
-                comentariosDiv.innerHTML = '<p style="color: #6b7280; text-align: center;">No hay comentarios aún</p>';
-                return;
-            }
-
-            comentariosDiv.innerHTML = comentarios.map(c => `
-                <div class="comment ${c.usuarioRol === 'Tecnico' || c.usuarioRol === 'Admin' ? 'tecnico' : ''} ${c.usuarioId === usuarioId ? 'own' : ''}">
-                    <div class="comment-header">
-                        <strong>${escapeHtml(c.usuarioNombre)} (${escapeHtml(c.usuarioRol)})</strong>
-                        <span>${new Date(c.fecha).toLocaleString('es-ES')}</span>
-                    </div>
-                    <p>${escapeHtml(c.mensaje)}</p>
-                </div>
-            `).join('');
-
-            comentariosDiv.scrollTop = comentariosDiv.scrollHeight;
-        }
-
         function iniciarAutoRefreshComentarios() {
             if (comentariosInterval) {
                 clearInterval(comentariosInterval);
@@ -848,15 +823,14 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Tickets/${ticketActual.id}/estado`, {
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets/${ticketActual.id}/estado`, {
                     method: 'PUT',
-                    headers: getAuthHeaders(),
                     body: JSON.stringify({ estado: estado })
                 });
 
                 if (response.ok) {
                     alert('Estado actualizado');
-                    notifyDataChanged('ticket-status-updated', ticketActual.id);
+                    window.notifyDataChanged('ticket-status-updated', ticketActual.id);
                     cerrarModal();
                     cargarTickets();
                 } else {
@@ -878,15 +852,14 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE_URL}/api/Tickets/${ticketActual.id}/asignar`, {
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets/${ticketActual.id}/asignar`, {
                     method: 'PUT',
-                    headers: getAuthHeaders(),
                     body: JSON.stringify({ tecnicoId: parseInt(tecnicoId, 10) })
                 });
 
                 if (response.ok) {
                     alert('Ticket asignado correctamente');
-                    notifyDataChanged('ticket-assigned', ticketActual.id);
+                    window.notifyDataChanged('ticket-assigned', ticketActual.id);
                     cerrarModal();
                     cargarTickets();
                 } else {
@@ -909,9 +882,8 @@
 
             try {
                 boton.disabled = true;
-                const response = await fetch(`${API_BASE_URL}/api/Comentarios`, {
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Comentarios`, {
                     method: 'POST',
-                    headers: getAuthHeaders(),
                     body: JSON.stringify({
                         ticketId: ticketActual.id,
                         mensaje: mensaje
@@ -920,8 +892,8 @@
 
                 if (response.ok) {
                     document.getElementById('nuevoComentario').value = '';
-                    await cargarComentarios();
-                    notifyDataChanged('comment', ticketActual.id);
+                    await cargarComentarios(); // Reload comments for the current ticket
+                    window.notifyDataChanged('comment', ticketActual.id); // Notify other tabs
                 } else {
                     const data = await response.json();
                     alert(data.message || 'Error al enviar comentario');

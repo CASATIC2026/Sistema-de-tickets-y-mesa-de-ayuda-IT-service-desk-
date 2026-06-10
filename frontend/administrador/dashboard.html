@@ -250,8 +250,8 @@
     <script src="../js/funcionBase.js"></script>
 
     <script>
-        const token = getToken();
-        const rol = (typeof getUserRole === 'function') ? getUserRole().trim() : (localStorage.getItem('rol') || '').trim();
+        const token = getToken(); // Global function
+        const rol = getCurrentUser().rol.trim(); // Global function
 
         if (!token) {
             window.location.replace('../solicitante/Login.html');
@@ -372,22 +372,14 @@
     </footer>
 
     <script>
-        const REFRESH_EVENT_KEY = 'helpdesk-data-refresh';
         const AUTO_REFRESH_MS = 5000;
         let dashboardRefreshInterval = null;
 
-        document.getElementById('nombreUsuario').textContent = localStorage.getItem('nombre') || '';
+        document.getElementById('nombreUsuario').textContent = getCurrentUser().nombre;
 
         if (localStorage.getItem('rol') === 'Admin') {
             const adminLink = document.getElementById('adminUsersLink');
             if(adminLink) adminLink.style.display = 'inline';
-        }
-
-        function getAuthHeaders() {
-            return {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            };
         }
 
         function refrescarDashboard() {
@@ -408,10 +400,8 @@
         }
 
         async function cargarEstadisticas() {
-            try {
-                const response = await fetch(`${window.API_BASE_URL}/api/Tickets/estadisticas`, {
-                    headers: getAuthHeaders()
-                });
+            try { // Use fetchWithAuth
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets/estadisticas`);
                 const stats = await response.json();
 
                 document.getElementById('totalTickets').textContent = stats.total || 0;
@@ -431,10 +421,8 @@
         }
 
         async function cargarTicketsRecientes() {
-            try {
-                const response = await fetch(`${window.API_BASE_URL}/api/Tickets`, {
-                    headers: getAuthHeaders()
-                });
+            try { // Use fetchWithAuth
+                const response = await window.fetchWithAuth(`${window.API_BASE_URL}/api/Tickets`);
 
                 if (!response.ok) {
                     throw new Error('No se pudieron cargar los tickets');
@@ -463,7 +451,7 @@
                     return `
                         <div class="ticket-item">
                             <div class="ticket-info">
-                                <h4>#${t.id} - ${t.titulo.substring(0, 40)}${t.titulo.length > 40 ? '...' : ''}</h4>
+                                <h4>#${window.escapeHtml(t.id)} - ${window.escapeHtml(t.titulo.substring(0, 40))}${t.titulo.length > 40 ? '...' : ''}</h4>
                                 <span>${t.usuarioNombre || 'N/A'} • ${new Date(t.fechaCreacion).toLocaleDateString('es-ES')}</span>
                             </div>
                             <span class="badge ${badgeClass}">${t.estado || 'Abierto'}</span>
@@ -477,7 +465,7 @@
         }
 
         window.addEventListener('storage', event => {
-            if (event.key === REFRESH_EVENT_KEY && event.newValue) {
+            if (event.key === window.REFRESH_EVENT_KEY && event.newValue) {
                 refrescarDashboard();
             }
         });
